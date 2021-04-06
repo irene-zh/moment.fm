@@ -1,7 +1,7 @@
 # moment.fm
 
 Developers:
--Eddie Cai
--Felix Cui
--Linda Ting
--Irene Zhang
+*Eddie Cai
+*Felix Cui
+*Linda Ting
+*Irene Zhang
