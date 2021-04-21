@@ -1,0 +1,15 @@
+.header-container, .results-container {
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.header-container .headers, .results-container .movieResults {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 40px;
+}
+
+.movieResults .title, .movieResults .id, .movieResults .rating, .movieResults .votes, .headers .header {
+  flex: 1 0 25%;
+}
