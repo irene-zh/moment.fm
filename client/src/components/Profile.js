@@ -1,10 +1,10 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
 import BestMoviesRow from './BestMoviesRow';
-import '../style/BestMovies.css';
+import '../style/Profile.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default class BestMovies extends React.Component {
+export default class Profile extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -118,9 +118,9 @@ export default class BestMovies extends React.Component {
 
 	render() {
 		return (
-			<div className="BestMovies">
+			<div className="Profile">
 				
-				<PageNavbar active="bestgenres" />
+				<PageNavbar active="profile" />
 
 				<div className="container bestmovies-container">
 					<div className="jumbotron">

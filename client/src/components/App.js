@@ -5,10 +5,48 @@ import {
 	Switch
 } from 'react-router-dom';
 import Dashboard from './Dashboard';
-import Recommendations from './Recommendations';
-import BestMovies from './BestMovies';
+import Explore from './Explore';
+import Profile from './Profile';
+import SpotifyWebApi from 'spotify-web-api-js';
+const spotifyApi = new SpotifyWebApi();
 
 export default class App extends React.Component {
+  constructor(){
+    super();
+    const params = this.getHashParams();
+    const token = params.access_token;
+    if (token) {
+      spotifyApi.setAccessToken(token);
+    }
+    this.state = {
+      loggedIn: token ? true : false,
+      nowPlaying: { name: 'Not Checked', albumArt: '' }
+    }
+  }
+
+  getHashParams() {
+    var hashParams = {};
+    var e, r = /([^&;=]+)=?([^&;]*)/g,
+        q = window.location.hash.substring(1);
+    e = r.exec(q)
+    while (e) {
+       hashParams[e[1]] = decodeURIComponent(e[2]);
+       e = r.exec(q);
+    }
+    return hashParams;
+  }
+
+  getNowPlaying(){
+    spotifyApi.getMyCurrentPlaybackState()
+      .then((response) => {
+        this.setState({
+          nowPlaying: { 
+              name: response.item.name, 
+              albumArt: response.item.album.images[0].url
+            }
+        });
+      })
+  }
 
 	render() {
 		return (
@@ -18,7 +56,23 @@ export default class App extends React.Component {
 						<Route
 							exact
 							path="/"
-							render={() => <Dashboard />}
+							render= {
+                () => 
+                <div className="App">
+                <a href='http://localhost:8888' > Login to Spotify </a>
+                <div>
+                  Now Playing: { this.state.nowPlaying.name }
+                </div>
+                <div>
+                  <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
+                </div>
+                { this.state.loggedIn &&
+                  <button onClick={() => this.getNowPlaying()}>
+                    Check Now Playing
+                  </button>
+                }
+                </div>
+              }
 						/>
 						<Route
 							exact
@@ -26,12 +80,12 @@ export default class App extends React.Component {
 							render={() => <Dashboard />}
 						/>
 						<Route
-							path="/recommendations"
-							render={() => <Recommendations />}
+							path="/explore"
+							render={() => <Explore/>}
 						/>
 						<Route
-							path="/bestmovies"
-							render={() => <BestMovies />}
+							path="/profile"
+							render={() => <Profile />}
 						/>
 					</Switch>
 				</Router>
