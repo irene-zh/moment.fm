@@ -4,7 +4,6 @@ import {
 	Route,
 	Switch
 } from 'react-router-dom';
-import Dashboard from './Dashboard';
 import Explore from './Explore';
 import Profile from './Profile';
 import SpotifyWebApi from 'spotify-web-api-js';
@@ -19,8 +18,13 @@ export default class App extends React.Component {
       spotifyApi.setAccessToken(token);
     }
     this.state = {
+      loginPrompt: [],
       loggedIn: token ? true : false,
-      nowPlaying: { name: 'Not Checked', albumArt: '' }
+      nowPlaying: {
+        name: '', 
+        artist: '',
+        album: '', 
+        albumArt: ''}
     }
   }
 
@@ -41,9 +45,11 @@ export default class App extends React.Component {
       .then((response) => {
         this.setState({
           nowPlaying: { 
-              name: response.item.name, 
-              albumArt: response.item.album.images[0].url
-            }
+            name: response.item.name, 
+            artist: response.item.artists[0].name,
+            album: response.item.album.name, 
+            albumArt: response.item.album.images[0].url
+          }
         });
       })
   }
@@ -56,37 +62,23 @@ export default class App extends React.Component {
 						<Route
 							exact
 							path="/"
-							render= {
-                () => 
-                <div className="App">
-                <a href='http://localhost:8888' > Login to Spotify </a>
-                <div>
-                  Now Playing: { this.state.nowPlaying.name }
-                </div>
-                <div>
-                  <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }}/>
-                </div>
-                { this.state.loggedIn &&
-                  <button onClick={() => this.getNowPlaying()}>
-                    Check Now Playing
-                  </button>
-                }
-                </div>
-              }
+							render={() => <Explore />}
 						/>
 						<Route
 							exact
-							path="/dashboard"
-							render={() => <Dashboard />}
+							path="/Explore"
+							render={() => <Explore />}
 						/>
 						<Route
-							path="/explore"
-							render={() => <Explore/>}
-						/>
-						<Route
-							path="/profile"
+							exact
+							path="/Profile"
 							render={() => <Profile />}
 						/>
+            <Route 
+              exact
+              path="/artist/:id"
+              component={Artist}
+            />
 					</Switch>
 				</Router>
 			</div>

@@ -13,6 +13,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 /* ------------------- Route handler registration ----------------- */
 /* ---------------------------------------------------------------- */
 
+app.get('/artist/:name', routes.getArtist);
+
 /* ---- (Dashboard) ---- */
 // The route localhost:8081/keywords is registered to the function
 // routes.getTop20Keywords, specified in routes.js.

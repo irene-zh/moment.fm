@@ -1,5 +1,5 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Nav from 'react-bootstrap/Nav';
 
 export default class PageNavbar extends React.Component {
 	constructor(props) {
@@ -11,14 +11,10 @@ export default class PageNavbar extends React.Component {
 	};
 
 	componentDidMount() {
-		const pageList = ['Dashboard', 'Explore', 'Profile'];
+		const pageList = ['Explore', 'Profile'];
 
 		let navbarDivs = pageList.map((page, i) => {
-			if (this.props.active === page) {
-				return <a className="nav-item nav-link active" key={i} href={"/" + page}>{page.charAt(0).toUpperCase() + page.substring(1, page.length)}</a>
-			} else {
-				return <a className="nav-item nav-link" key={i} href={"/" + page}>{page.charAt(0).toUpperCase() + page.substring(1, page.length)}</a>
-			}
+			return <Nav.Item key={i}><Nav.Link href={"/" + page}>{page.charAt(0).toUpperCase() + page.substring(1, page.length)}</Nav.Link></Nav.Item> 
 		});
 
 		this.setState({
@@ -27,17 +23,12 @@ export default class PageNavbar extends React.Component {
 	};
 
 	render() {
+    var activeKey = "/";
 		return (
-			<div className="PageNavbar">
-				<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			      <span className="navbar-brand center">moment.fm</span>
-			      <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-			        <div className="navbar-nav">
-			        	{this.state.navDivs}
-			        </div>
-			      </div>
-			    </nav>
-			</div>
+			<Nav activeKey={activeKey}>
+				<Nav.Item><Nav.Link href="/">moment.fm</Nav.Link></Nav.Item>
+			  {this.state.navDivs}
+      </Nav>
     );
 	};
 };
