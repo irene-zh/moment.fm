@@ -202,6 +202,7 @@ const bestMoviesPerDecadeGenre = (req, res) => {
 };
 
 module.exports = {
+	getArtist: getArtist,
 	getTop20Keywords: getTop20Keywords,
 	getTopMoviesWithKeyword: getTopMoviesWithKeyword,
 	getRecs: getRecs,

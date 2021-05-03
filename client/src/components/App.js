@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import Explore from './Explore';
 import Profile from './Profile';
+import ArtistPage from './ArtistPage';
 import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
 
@@ -77,7 +78,7 @@ export default class App extends React.Component {
             <Route 
               exact
               path="/artist/:id"
-              component={Artist}
+              component={ArtistPage}
             />
 					</Switch>
 				</Router>
