@@ -14,7 +14,7 @@ export default class ArtistPage extends React.Component {
 		super(props);
 
 		this.state = {
-			info=[]
+			info: {}
 		};
 	};
 
