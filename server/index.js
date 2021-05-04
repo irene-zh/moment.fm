@@ -15,6 +15,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/artist/:name', routes.getArtist);
 
+app.get('/song/:id', routes.getSong);
+
 app.get('/explore/songs/:title', routes.getRecommendedSongs);
 
 app.get('/explore/artists/:name', routes.getRecommendedArtists);
