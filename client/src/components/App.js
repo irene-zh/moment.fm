@@ -4,8 +4,10 @@ import {
 	Route,
 	Switch
 } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
 import Explore from './Explore';
 import Profile from './Profile';
+import PageNavbar from './PageNavbar';
 import ArtistPage from './ArtistPage';
 import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
@@ -63,7 +65,19 @@ export default class App extends React.Component {
 						<Route
 							exact
 							path="/"
-							render={() => <Explore />}
+							render={() => (
+                <>
+                <PageNavbar />
+                <Container>
+                  <h1>&#x1F3A7;</h1>
+                  <h1>Welcome to moment.fm!</h1>
+                  <p>a kewl way to find music recs ahaha xd be in the ~ moment ~</p>
+                  <p>Check out the <a href="/Explore">Explore</a> page to start searching for your favorite artists and songs, 
+                      or head on over to the <a href="/Profile">Profile</a> page to connect your Spotify and unlock more hidden gems!
+                  </p>
+                </Container>
+                </>
+              )}
 						/>
 						<Route
 							exact

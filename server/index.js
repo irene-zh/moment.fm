@@ -15,6 +15,10 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/artist/:name', routes.getArtist);
 
+app.get('/explore/songs/:title', routes.getRecommendedSongs);
+
+app.get('/explore/artists/:name', routes.getRecommendedArtists);
+
 /* ---- (Dashboard) ---- */
 // The route localhost:8081/keywords is registered to the function
 // routes.getTop20Keywords, specified in routes.js.

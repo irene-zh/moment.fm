@@ -1,53 +1,96 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import RecommendationsRow from './RecommendationsRow';
-import '../style/Recommendations.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import SongRow from './SongRow';
+import ArtistRow from './ArtistRow';
+import Button from 'react-bootstrap/Button'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
-export default class Recommendations extends React.Component {
+export default class Explore extends React.Component {
 	constructor(props) {
 		super(props);
 
-		// State maintained by this React component is the selected movie name, and the list of recommended movies.
 		this.state = {
-			movieName: "",
-			recMovies: []
+			searchItem: '',
+			results: []
 		};
 
-		this.handleMovieNameChange = this.handleMovieNameChange.bind(this);
-		this.submitMovie = this.submitMovie.bind(this);
+		this.handleInputChange = this.handleInputChange.bind(this);
+		this.submitSong = this.submitSong.bind(this);
+		this.submitArtist = this.submitArtist.bind(this);
 	};
 
-	handleMovieNameChange(e) {
+	handleInputChange(e) {
 		this.setState({
-			movieName: e.target.value
+			searchItem: e.target.value
 		});
 	};
 
-	/* ---- Q2 (Recommendations) ---- */
-	// Hint: Name of movie submitted is contained in `this.state.movieName`.
-	submitMovie() {
-    const movie = this.state.movieName;
-		fetch("http://localhost:8081/recommendations/" + movie, {
+  submitSong() {
+    const searchItem = this.state.searchItem;
+    console.log("searching for song with title " + searchItem);
+    const header = (
+    <Container>
+      <Row>
+        <Col><h5>Song Title</h5></Col>
+        <Col><h5>Artist</h5></Col>
+        <Col><h5>Release Year</h5></Col>
+      </Row>
+    </Container>
+    );
+		fetch("http://localhost:8081/explore/songs/" + searchItem, {
       method: 'GET'
     }).then(res => {
       return res.json();
     }, err => {
       console.log(err);
-    }).then(recsList => {
-      if (!recsList) return;
+    }).then(resList => {
+      if (!resList) return;
 
-      const recsDivs = recsList.map((recObj, i) =>
-        <RecommendationsRow
-          title={recObj.title}
-          id={recObj.movie_id}
-          rating={recObj.rating}
-          votes={recObj.num_ratings}
+      const resultsDiv = resList.map((resObj, i) =>
+        <SongRow
+          name={resObj.name}
+          artist={resObj.artist}
+          year={resObj.year}
         />
       );
 
       this.setState({
-        recMovies: recsDivs
+        results: [header, resultsDiv]
+      });
+    }, err => {
+      console.log(err);
+    });
+  }
+
+	submitArtist() {
+    const searchItem = this.state.searchItem;
+    console.log("searching for artist with title " + searchItem);
+    const header = (
+    <Container>
+      <Row>
+        <Col><h5>Name</h5></Col>
+      </Row>
+    </Container>
+    );
+		fetch("http://localhost:8081/explore/artists/" + searchItem, {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
+
+      const resultsDiv = resList.map((resObj, i) =>
+        <ArtistRow
+          name={resObj.name}
+        />
+      );
+
+      this.setState({
+        results: [header, resultsDiv]
       });
     }, err => {
       console.log(err);
@@ -57,10 +100,17 @@ export default class Recommendations extends React.Component {
 	
 	render() {
 		return (
-			<div className="Explore">
+			<>
 				<PageNavbar active="explore" />
-        
-			</div>
+        <Container>
+          <Row>
+            <Col sm={8}><input type="text" style={{width:"90%"}} placeholder="search for an artist or song!" value={this.state.searchItem} onChange={this.handleInputChange} /></Col>
+            <Col sm={2}><Button onClick={this.submitArtist}>Search Artists</Button></Col>
+            <Col sm={2}><Button onClick={this.submitSong}>Search Songs</Button></Col>
+          </Row>
+        </Container>
+        {this.state.results}
+			</>
 		);
 	};
 };
