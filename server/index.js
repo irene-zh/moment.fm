@@ -21,6 +21,8 @@ app.get('/explore/songs/:title', routes.getRecommendedSongs);
 
 app.get('/explore/artists/:name', routes.getRecommendedArtists);
 
+app.get('/iGotAFeeling/', routes.getIGotAFeeling);
+
 app.listen(8081, () => {
 	console.log('Server listening on PORT 8081');
 });

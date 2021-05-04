@@ -77,6 +77,7 @@ export default class App extends React.Component {
                       or head on over to the <a href="/Profile">Profile</a> page to connect your Spotify and unlock more hidden gems!
                   </p>
                 </Container>
+                <Home/>
                 </>
               )}
 						/>
