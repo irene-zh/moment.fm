@@ -13,104 +13,76 @@ export default class Home extends React.Component {
 		super(props);
 
 		this.state = {
-			searchItem: '',
-			results: []
+			iGotAFeeling: '',
+      saddest2020: '',
+      hiphop2018: '',
+      metal2005: '',
+      frequent2009: '',
+      popular2020: '',
+      activePopArtist: '',
+      relevance: ''
 		};
 
-		this.handleInputChange = this.handleInputChange.bind(this);
-		this.submitSong = this.submitSong.bind(this);
-		this.submitArtist = this.submitArtist.bind(this);
+		this.getSongsIGotAFeeling = this.getSongsIGotAFeeling.bind(this);
+		this.getSongsSaddest2020 = this.getSongsSaddest2020.bind(this);
+		this.getSongsHipHop2018 = this.getSongsHipHop2018.bind(this);
+		this.getSongsMetal2005 = this.getSongsMetal2005.bind(this);
+		this.getSongsPopular2020 = this.getSongsPopular2020.bind(this);
+		this.getArtistsFrequent2019 = this.getArtistsFrequent2019.bind(this);
+		this.getArtistsActivePop = this.getArtistsActivePop.bind(this);
+		this.getArtistsRelevance = this.getArtistsRelevance.bind(this);
 	};
 
-	handleInputChange(e) {
-		this.setState({
-			searchItem: e.target.value
-		});
-	};
+  getSongsIGotAFeeling() {
 
-  submitSong() {
-    const searchItem = this.state.searchItem;
-    console.log("searching for song with title " + searchItem);
-    const header = (
-    <Container>
-      <Row>
-        <Col><h5>Song Title</h5></Col>
-        <Col><h5>Artist</h5></Col>
-        <Col><h5>Release Year</h5></Col>
-      </Row>
-    </Container>
-    );
-		fetch("http://localhost:8081/explore/songs/" + searchItem, {
-      method: 'GET'
-    }).then(res => {
-      return res.json();
-    }, err => {
-      console.log(err);
-    }).then(resList => {
-      if (!resList) return;
-
-      const resultsDiv = resList.map((resObj, i) =>
-        <SongRow
-          name={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
-        />
-      );
-
-      this.setState({
-        results: [header, resultsDiv]
-      });
-    }, err => {
-      console.log(err);
-    });
   }
 
-	submitArtist() {
-    const searchItem = this.state.searchItem;
-    console.log("searching for artist with title " + searchItem);
-    const header = (
-    <Container>
-      <Row>
-        <Col><h5>Name</h5></Col>
-      </Row>
-    </Container>
-    );
-		fetch("http://localhost:8081/explore/artists/" + searchItem, {
-      method: 'GET'
-    }).then(res => {
-      return res.json();
-    }, err => {
-      console.log(err);
-    }).then(resList => {
-      if (!resList) return;
+  getSongsSaddest2020() {
 
-      const resultsDiv = resList.map((resObj, i) =>
-        <ArtistRow
-          name={resObj.name}
-        />
-      );
+  }
 
-      this.setState({
-        results: [header, resultsDiv]
-      });
-    }, err => {
-      console.log(err);
-    });
-	};
+  getSongsHipHop2018() {
 
+  }
+
+  getSongsMetal2005() {
+
+  }
+
+  getSongsPopular2020() {
+
+  }
+
+  getArtistsFrequent2019() {
+
+  }
+
+  getArtistsActivePop() {
+
+  }
+
+  getArtistsRelevance() {
+
+  }
+  
+  componentDidMount() {
+    this.getSongsIGotAFeeling();
+    this.getSongsSaddest2020();
+    this.getSongsHipHop2018();
+    this.getSongsMetal2005();
+    this.getSongsPopular2020();
+    this.getArtistsFrequent2019();
+    this.getArtistsActivePop();
+    this.getArtistsRelevance();
+  }
 	
 	render() {
 		return (
 			<>
-				<PageNavbar active="explore" />
+				<PageNavbar />
         <Container>
-          <Row>
-            <Col sm={8}><input type="text" style={{width:"90%"}} placeholder="search for an artist or song!" value={this.state.searchItem} onChange={this.handleInputChange} /></Col>
-            <Col sm={2}><Button onClick={this.submitArtist}>Search Artists</Button></Col>
-            <Col sm={2}><Button onClick={this.submitSong}>Search Songs</Button></Col>
-          </Row>
         </Container>
-        {this.state.results}
+        {this.state.contents}
 			</>
 		);
 	};

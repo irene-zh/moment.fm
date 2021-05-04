@@ -1,4 +1,4 @@
-const config = require('./db-config.js');
+const config = require('../db-config.js');
 const mysql = require('mysql');
 
 config.connectionLimit = 10;
@@ -7,6 +7,15 @@ const connection = mysql.createPool(config);
 /* -------------------------------------------------- */
 /* ------------------- Route Handlers --------------- */
 /* -------------------------------------------------- */
+
+const getSong = (req, res) => {
+  const query = ``;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
 
 const getArtist = (req, res) => {
   const query = ``;
@@ -36,6 +45,7 @@ const getRecommendedArtists = (req, res) => {
 };
 
 module.exports = {
+  getSong: getSong,
 	getArtist: getArtist,
 	getRecommendedArtists: getRecommendedArtists,
   getRecommendedSongs: getRecommendedSongs
