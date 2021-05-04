@@ -1,12 +1,12 @@
 # moment.fm
 
 # building the project
-- cd auth-server
-- node authorization_code/app.js
-- cd server
-- npm start
-- cd client
-- npm start
+1. cd auth-server
+2. node authorization_code/app.js
+3. cd ../server
+4. npm start
+5. cd ../client
+6. npm start
 
 
 # Developers:
