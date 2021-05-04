@@ -1,4 +1,5 @@
 import React from 'react';
+import PageNavbar from './PageNavbar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Media from 'react-bootstrap/Media';
@@ -32,9 +33,10 @@ export default class ArtistPage extends React.Component {
     }).then(artistInfo => {
       if (!artistInfo) return;
 
+      // TODO: LINK FOR GENRES
       const genresDiv = artistInfo.genres.map((genre, i) =>
         <a href=""><Button/>{genre}</a>
-      );  
+      ); 
 
       const artistDiv = 
         <Container>
@@ -62,6 +64,11 @@ export default class ArtistPage extends React.Component {
   }
 	
 	render() {
-		return this.state.info;
+		return (
+    <>
+    <PageNavbar />
+    {this.state.info}
+    </>
+    );
 	};
 };

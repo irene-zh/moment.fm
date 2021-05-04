@@ -17,6 +17,24 @@ const getArtist = (req, res) => {
   });
 };
 
+const getRecommendedSongs = (req, res) => {
+  const query = ``;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
+
+const getRecommendedArtists = (req, res) => {
+  const query = ``;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
+
 /* ---- Q1a (Dashboard) ---- */
 // Equivalent to: function getTop20Keywords(req, res) {}
 const getTop20Keywords = (req, res) => {
@@ -203,6 +221,8 @@ const bestMoviesPerDecadeGenre = (req, res) => {
 
 module.exports = {
 	getArtist: getArtist,
+	getRecommendedArtists: getRecommendedArtists,
+  getRecommendedSongs: getRecommendedSongs,
 	getTop20Keywords: getTop20Keywords,
 	getTopMoviesWithKeyword: getTopMoviesWithKeyword,
 	getRecs: getRecs,

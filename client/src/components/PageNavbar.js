@@ -1,5 +1,6 @@
 import React from 'react';
 import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar'
 
 export default class PageNavbar extends React.Component {
 	constructor(props) {
@@ -25,10 +26,12 @@ export default class PageNavbar extends React.Component {
 	render() {
     var activeKey = "/";
 		return (
+      <Navbar sticky="top" bg="primary" variant="dark" style={{marginBottom: "50px"}}>
 			<Nav activeKey={activeKey}>
 				<Nav.Item><Nav.Link href="/">moment.fm</Nav.Link></Nav.Item>
 			  {this.state.navDivs}
       </Nav>
+      </Navbar>
     );
 	};
 };
