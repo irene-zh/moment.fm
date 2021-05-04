@@ -1,9 +1,9 @@
 // Private. Will not be included in submission
 // Replace <Your Pennkey> and <Your Password>
 module.exports = {
-	host: "localhost",
-	user: "root",
-	password: "tata1230",
-	port: "3306",
-	database: "cis550_hw2"
+	host: "cis550proj.c6uc5gtiukkv.us-east-2.rds.amazonaws.com",
+	user: "linda",
+	password: "Fourstink!!",
+	port: "1521",
+	database: "MOMENTDB"
 }
