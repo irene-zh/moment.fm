@@ -51,7 +51,7 @@ export default class Explore extends React.Component {
 
       const resultsDiv = resList.map((resObj, i) =>
         <SongRow
-          name={resObj.name}
+          title={resObj.title}
           artist={resObj.artist}
           year={resObj.year}
         />

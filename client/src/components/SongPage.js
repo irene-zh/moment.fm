@@ -38,7 +38,6 @@ export default class SongPage extends React.Component {
           <Row>
             <h1>{songInfo.title}</h1>
             <p>{songInfo.artist}</p>
-            <p>{songInfo.album}</p>
             <p>{songInfo.year}</p>
           </Row>
         </Container>;
