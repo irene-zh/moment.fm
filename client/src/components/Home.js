@@ -8,7 +8,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Dropdown from 'react-bootstrap/Dropdown'
 
-export default class Explore extends React.Component {
+export default class Home extends React.Component {
 	constructor(props) {
 		super(props);
 

@@ -5,6 +5,7 @@ import {
 	Switch
 } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
+import Home from './Home';
 import Explore from './Explore';
 import Profile from './Profile';
 import PageNavbar from './PageNavbar';
