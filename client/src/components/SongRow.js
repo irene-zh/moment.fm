@@ -8,7 +8,7 @@ export default class SongRow extends React.Component {
 		return (
 			<Container>
         <Row>
-          <Col><p>{this.props.title}</p></Col>
+          <Col><p>{this.props.name}</p></Col>
           <Col><p>{this.props.artist}</p></Col>
           <Col><p>{this.props.year}</p></Col>
         </Row>

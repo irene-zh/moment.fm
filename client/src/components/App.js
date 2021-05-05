@@ -69,13 +69,14 @@ export default class App extends React.Component {
 							render={() => (
                 <>
                 <PageNavbar />
-                <Container>
+                <Container style={{marginBottom:"50px"}}>
                   <h1>&#x1F3A7;</h1>
                   <h1>Welcome to moment.fm!</h1>
                   <p>a kewl way to find music recs ahaha xd be in the ~ moment ~</p>
                   <p>Check out the <a href="/Explore">Explore</a> page to start searching for your favorite artists and songs, 
                       or head on over to the <a href="/Profile">Profile</a> page to connect your Spotify and unlock more hidden gems!
                   </p>
+                  <p>In the meantime, we've got some fun recommendations and statistics for you below.</p>
                 </Container>
                 <Home/>
                 </>
