@@ -1,14 +1,10 @@
 import React from 'react';
-import PageNavbar from './PageNavbar';
 import SongRow from './SongRow';
 import ArtistRow from './ArtistRow';
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
-import CardDeck from 'react-bootstrap/CardDeck'
+import CardColumns from 'react-bootstrap/CardColumns'
 import Card from 'react-bootstrap/Card'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Dropdown from 'react-bootstrap/Dropdown'
 
 export default class Home extends React.Component {
 	constructor(props) {
@@ -36,16 +32,7 @@ export default class Home extends React.Component {
 	};
 
   getSongsIGotAFeeling() {
-    const header = (
-      <Card>
-        <Card.Body>
-          <Card.Title>Songs most like <b>I got a Feeling</b></Card.Title>
-          <SongRow title="hola" artist="linder" year="2021"/>
-        </Card.Body>
-      </Card>
-    );
-    this.setState({iGotAFeeling: header});
-/*
+    var resultsDiv;
 		fetch("http://localhost:8081/iGotAFeeling", {
       method: 'GET'
     }).then(res => {
@@ -55,56 +42,299 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      const resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.map((resObj, i) =>
         <SongRow
-          title={resObj.title}
+          id = {resObj.id}
+          title={resObj.name}
           artist={resObj.artist}
           year={resObj.year}
         />
       );
-
-      this.setState({
-        iGotAFeeling: [header, resultsDiv]
-      });
     }, err => {
       console.log(err);
-    });*/
-  }
+    });
 
-  getSongsSaddest2020() {
-    const header = (
+    const contents = (
       <Card>
         <Card.Body>
-          <Card.Title>Saddest songs of <b>2020</b></Card.Title>
-          <Card.Text>bc that year fckin sucked</Card.Text>
-          <SongRow title="hola" artist="linder" year="2021"/>
+          <Card.Title>We know you love "I got a Feeling"</Card.Title>
+          <Card.Subtitle>so here's some songs just like it</Card.Subtitle>
+          {resultsDiv}
         </Card.Body>
       </Card>
     );
-    this.setState({saddest2020: header});
+
+    this.setState({
+      iGotAFeeling: contents
+    });
+  }
+
+  getSongsSaddest2020() {
+    var resultsDiv; 
+		fetch("http://localhost:8081/saddestOf2020", {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
+
+      resultsDiv = resList.map((resObj, i) =>
+        <SongRow
+          id = {resObj.id}
+          title={resObj.name}
+          artist={resObj.artist}
+          year={resObj.year}
+        />
+      );
+    }, err => {
+      console.log(err);
+    });
+
+    const contents = (
+      <Card>
+        <Card.Body>
+          <Card.Title>Saddest songs of 2020</Card.Title>
+          <Card.Subtitle>bc last yr sucked</Card.Subtitle>
+          {resultsDiv}
+        </Card.Body>
+      </Card>
+    );
+
+    this.setState({
+      saddest2020: contents
+    });
   }
 
   getSongsHipHop2018() {
+    var resultsDiv;
+    var artist = "";
+		fetch("http://localhost:8081/hiphop2018", {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
 
+      artist = resList[0].artist_name;
+      resultsDiv = resList.map((resObj, i) =>
+        <SongRow
+          id = {resObj.id}
+          title={resObj.name}
+          artist={resObj.artist}
+          year={resObj.year}
+        />
+      );
+    }, err => {
+      console.log(err);
+    });
+
+    const contents = (
+      <Card>
+        <Card.Body>
+          <Card.Title>Best of hiphop by {artist} in 2018</Card.Title>
+          <Card.Subtitle>swag</Card.Subtitle>
+          {resultsDiv}
+        </Card.Body>
+      </Card>
+    );
+
+    this.setState({
+      hiphop2018: contents
+    });
   }
 
   getSongsMetal2005() {
+    var resultsDiv;
+    var artist;
+		fetch("http://localhost:8081/metal2005", {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
+
+      resultsDiv = resList.map((resObj, i) =>
+        <SongRow
+          id = {resObj.id}
+          title={resObj.name}
+          artist={resObj.artist}
+          year={resObj.year}
+        />
+      );
+    }, err => {
+      console.log(err);
+    });
+
+    const contents = (
+      <Card>
+        <Card.Body>
+          <Card.Title>Liveliest metal in 2005</Card.Title>
+          <Card.Subtitle>yeah</Card.Subtitle>
+          {resultsDiv}
+        </Card.Body>
+      </Card>
+    );
+
+    this.setState({
+      metal2005: contents
+    });
 
   }
 
   getSongsPopular2020() {
+    var resultsDiv; 
+		fetch("http://localhost:8081/popular2020", {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
 
+      resultsDiv = resList.map((resObj, i) =>
+        <SongRow
+          id = {resObj.id}
+          title={resObj.name}
+          artist={resObj.artist}
+          year={resObj.year}
+        />
+      );
+    }, err => {
+      console.log(err);
+    });
+
+    const contents = (
+      <Card>
+        <Card.Body>
+          <Card.Title>Top songs in 2020 by 2019's top pop artists</Card.Title>
+          <Card.Subtitle>bc clearly they've still got it</Card.Subtitle>
+          {resultsDiv}
+        </Card.Body>
+      </Card>
+    );
+
+    this.setState({
+      popular2020: contents
+    });
   }
 
   getArtistsFrequent2019() {
+    var resultsDiv; 
+		fetch("http://localhost:8081/saddestOf2020", {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
 
+      resultsDiv = resList.map((resObj, i) =>
+        <ArtistRow
+          name = {resObj.name}
+        />
+      );
+    }, err => {
+      console.log(err);
+    });
+
+    const contents = (
+      <Card>
+        <Card.Body>
+          <Card.Title>Most active artists of 2019</Card.Title>
+          <Card.Subtitle>they released a lot of songs :0</Card.Subtitle>
+          {resultsDiv}
+        </Card.Body>
+      </Card>
+    );
+
+    this.setState({
+      frequent2009: contents
+    });
   }
 
   getArtistsActivePop() {
+    var resultsDiv; 
+		fetch("http://localhost:8081/activePop", {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
+
+      resultsDiv = resList.map((resObj, i) =>
+        <SongRow
+          id = {resObj.id}
+          title={resObj.name}
+          artist={resObj.artist}
+          year={resObj.year}
+        />
+      );
+    }, err => {
+      console.log(err);
+    });
+
+    const contents = (
+      <Card>
+        <Card.Body>
+          <Card.Title>Most prolific pop artists of all time</Card.Title>
+          <Card.Subtitle>they are really popular!!</Card.Subtitle>
+          {resultsDiv}
+        </Card.Body>
+      </Card>
+    );
+
+    this.setState({
+      activePopArtist: contents
+    });
 
   }
 
   getArtistsRelevance() {
+    var resultsDiv; 
+		fetch("http://localhost:8081/artistsRelevance", {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(resList => {
+      if (!resList) return;
+
+      resultsDiv = resList.map((resObj, i) =>
+        <SongRow
+          id = {resObj.id}
+          title={resObj.name}
+          artist={resObj.artist}
+          year={resObj.year}
+        />
+      );
+    }, err => {
+      console.log(err);
+    });
+
+    const contents = (
+      <Card>
+        <Card.Body>
+          <Card.Title>Most relevant artists</Card.Title>
+          <Card.Subtitle>o____o</Card.Subtitle>
+          {resultsDiv}
+        </Card.Body>
+      </Card>
+    );
+
+    this.setState({
+      relevance: contents
+    });
 
   }
   
@@ -123,10 +353,20 @@ export default class Home extends React.Component {
 		return (
 			<>
       <Container>
-        <CardDeck>
+        <CardColumns>
           {this.state.iGotAFeeling}
+          {this.state.activePopArtist}
           {this.state.saddest2020}
-        </CardDeck>
+        </CardColumns>
+        <CardColumns>
+          {this.state.popular2020}
+          {this.state.frequent2009}
+          {this.state.relevance}
+        </CardColumns>
+        <CardColumns>
+          {this.state.hiphop2018}
+          {this.state.metal2005}
+        </CardColumns>
       </Container>
 			</>
 		);
