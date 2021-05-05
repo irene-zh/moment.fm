@@ -19,7 +19,7 @@ app.get('/song/:id', routes.getSong);
 
 app.get('/explore/songs/:title', routes.getRecommendedSongs);
 
-app.get('/explore/artists/:name', routes.getRecommendedArtists);
+app.get('/explore/artists/:artist_name', routes.getRecommendedArtists);
 
 app.get('/iGotAFeeling/', routes.getIGotAFeeling);
 

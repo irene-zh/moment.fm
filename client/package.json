@@ -14,7 +14,8 @@
     "react-dropdown": "^1.6.4",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^4.0.3",
-    "selenium-webdriver": "^4.0.0-alpha.5"
+    "selenium-webdriver": "^4.0.0-alpha.5",
+    "spotify-web-api-js": "^1.5.1"
   },
   "scripts": {
     "start": "react-scripts start",
