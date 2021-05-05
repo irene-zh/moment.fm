@@ -36,7 +36,58 @@ const getRecommendedSongs = (req, res) => {
 };
 
 const getRecommendedArtists = (req, res) => {
-  const query = ``;
+  const query = `WITH convert_to_decade AS (
+    SELECT s.year - (s.year % 10) as decade
+    FROM song s
+  ),
+  most_active AS (
+    SELECT s.decade
+    FROM artists a
+    JOIN song s
+    ON s.artist_name = a.name
+    WHERE a.name = ${artist_name}
+    GROUP BY s.decade
+    ORDER BY COUNT(s.decade) DESC
+    LIMIT 1
+  ),
+  top_genres AS (
+    SELECT s.genre
+    FROM artist a
+    JOIN song s 
+    ON a.name = s.artist_name
+  WHERE a.name = ${artist_name}
+    GROUP BY s.genre
+    ORDER BY COUNT(s.genre) DESC
+    LIMIT 5
+  ),
+  same_decade AS (
+    SELECT a.name as name, COUNT(s.name) AS decade_cnt
+    FROM artists a
+    JOIN song s
+    ON a.name = s.artist_name
+    WHERE s.year >= most_active
+    AND s.year <= most_active + 9
+    GROUP BY s.artist_name
+  ),
+  In_genre_helper AS (
+  SELECT 1 as n, s.artist AS artist_name
+  FROM song s
+  WHERE s.genre IN top_genres
+  )
+  same_genres AS (
+    SELECT a.name AS name, COUNT(n) AS genre_cnt
+    FROM artists a
+    JOIN in_genre_helper h
+    ON a.name = in_genre_helper.artist_name
+    GROUP BY a.name
+  )
+  SELECT artist_name
+  FROM same_decade sd
+  JOIN same_genre sg
+  ON sd.name = sg.name
+  ORDER BY decade_cnt DESC, genre_cnt DESC
+  LIMIT 5
+  `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
