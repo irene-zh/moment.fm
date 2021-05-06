@@ -13,29 +13,31 @@ app.use(bodyParser.urlencoded({extended: false}));
 /* ------------------- Route handler registration ----------------- */
 /* ---------------------------------------------------------------- */
 
-app.get('/artist/:name', routes.getArtist);
+app.get('/example', routes.getExample);
 
-app.get('/song/:id', routes.getSong);
+// app.get('/artist/:name', routes.getArtist);
 
-app.get('/explore/songs/:title', routes.getRecommendedSongs);
+// app.get('/song/:id', routes.getSong);
 
-app.get('/explore/artists/:artist_name', routes.getRecommendedArtists);
+// app.get('/explore/songs/:title', routes.getRecommendedSongs);
 
-app.get('/iGotAFeeling/', routes.getIGotAFeeling);
+// app.get('/explore/artists/:artist_name', routes.getRecommendedArtists);
 
-app.get('/saddestOf2020', routes.getSaddest2020);
+// app.get('/iGotAFeeling/', routes.getIGotAFeeling);
 
-app.get('/hiphop2018', routes.getHipHop2018);
+// app.get('/saddestOf2020', routes.getSaddest2020);
 
-app.get('/metal2005', routes.getMetal2005);
+// app.get('/hiphop2018', routes.getHipHop2018);
 
-app.get('/popular2020', routes.getSongsPopular2020);
+// app.get('/metal2005', routes.getMetal2005);
 
-app.get('/frequency2019', routes.getArtistsFrequent2019);
+// app.get('/popular2020', routes.getSongsPopular2020);
 
-app.get('/activePop', routes.getArtistsActivePop);
+// app.get('/frequency2019', routes.getArtistsFrequent2019);
 
-app.get('/artistRelevance', routes.getArtistsRelevance);
+// app.get('/activePop', routes.getArtistsActivePop);
+
+// app.get('/artistRelevance', routes.getArtistsRelevance);
 
 app.listen(8081, () => {
 	console.log('Server listening on PORT 8081');
