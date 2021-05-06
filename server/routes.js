@@ -9,7 +9,12 @@ const connection = mysql.createPool(config);
 /* -------------------------------------------------- */
 
 const getSong = (req, res) => {
-  const query = ``;
+  const songId = req.params.songId;
+  const query = `
+  SELECT s.name, s.artist, s.id, s.album, s.year
+  FROM songs s
+  WHERE s.id = ${songId};
+  `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -18,7 +23,12 @@ const getSong = (req, res) => {
 };
 
 const getArtist = (req, res) => {
-  const query = ``;
+  const artistId = req.params.artistId;
+  const query = `
+  SELECT a.name, a.id 
+  FROM artists a
+  WHERE a.id = ${artistId};
+  `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -26,8 +36,31 @@ const getArtist = (req, res) => {
   });
 };
 
-const getRecommendedSongs = (req, res) => {
-  const query = ``;
+const searchSongs = (req, res) => {
+  const songTitle = req.params.song;
+  const query = `
+  SELECT s.name, s.artist, s.id, s.album, s.year
+  FROM songs s
+  WHERE s.title LIKE "%${songTitle}%";
+  ORDER BY s.popularity DESC
+  LIMIT 20
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
+
+const searchArtists = (req, res) => {
+  const artistName = req.params.name;
+  const query = `
+  SELECT a.name, a.id
+  FROM artist a
+  WHERE a.name LIKE "%${artistName}%";
+  ORDER BY s.popularity DESC
+  LIMIT 20
+  `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -36,7 +69,9 @@ const getRecommendedSongs = (req, res) => {
 };
 
 const getRecommendedArtists = (req, res) => {
-  const query = `WITH convert_to_decade AS (
+  const artistName = req.params.name;
+  const query = `
+  WITH convert_to_decade AS (
     SELECT s.year - (s.year % 10) as decade
     FROM song s
   ),
@@ -45,7 +80,7 @@ const getRecommendedArtists = (req, res) => {
     FROM artists a
     JOIN song s
     ON s.artist_name = a.name
-    WHERE a.name = ${artist_name}
+    WHERE a.name = ${artistName}
     GROUP BY s.decade
     ORDER BY COUNT(s.decade) DESC
     LIMIT 1
@@ -55,7 +90,7 @@ const getRecommendedArtists = (req, res) => {
     FROM artist a
     JOIN song s 
     ON a.name = s.artist_name
-  WHERE a.name = ${artist_name}
+  WHERE a.name = ${artistName}
     GROUP BY s.genre
     ORDER BY COUNT(s.genre) DESC
     LIMIT 5
@@ -86,7 +121,7 @@ const getRecommendedArtists = (req, res) => {
   JOIN same_genre sg
   ON sd.name = sg.name
   ORDER BY decade_cnt DESC, genre_cnt DESC
-  LIMIT 5
+  LIMIT 5;
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -301,7 +336,8 @@ module.exports = {
   getSong: getSong,
 	getArtist: getArtist,
 	getRecommendedArtists: getRecommendedArtists,
-  getRecommendedSongs: getRecommendedSongs,
+  searchSongs: searchSongs,
+  searchArtists: searchArtists,
   getIGotAFeeling: getIGotAFeeling,
   getSaddest2020: getSaddest2020,
   getHipHop2018: getHipHop2018,
