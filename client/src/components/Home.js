@@ -1,7 +1,6 @@
 import React from 'react';
 import SongRow from './SongRow';
 import ArtistRow from './ArtistRow';
-import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import CardColumns from 'react-bootstrap/CardColumns'
 import Card from 'react-bootstrap/Card'
@@ -149,7 +148,6 @@ export default class Home extends React.Component {
 
   getSongsMetal2005() {
     var resultsDiv;
-    var artist;
 		fetch("http://localhost:8081/metal2005", {
       method: 'GET'
     }).then(res => {

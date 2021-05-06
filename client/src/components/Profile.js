@@ -9,7 +9,8 @@ const spotifyApi = new SpotifyWebApi();
 export default class Profile extends React.Component {
 	constructor(props) {
 		super(props);
-    const params = this.getHashParams();
+    
+    /*const params = getHashParams();
     const token = params.access_token;
     if (token) {
       spotifyApi.setAccessToken(token);
@@ -22,7 +23,7 @@ export default class Profile extends React.Component {
         artist: '',
         album: '', 
         albumArt: ''}
-    }
+    }*/
 	};
 
 	componentDidMount() {
@@ -40,33 +41,6 @@ export default class Profile extends React.Component {
       console.log("set login prompt button");
     }
 	};
-
-  getHashParams() {
-    var hashParams = {};
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
-        q = window.location.hash.substring(1);
-    e = r.exec(q)
-    while (e) {
-       hashParams[e[1]] = decodeURIComponent(e[2]);
-       e = r.exec(q);
-    }
-    return hashParams;
-  }
-
-  getNowPlaying(){
-    spotifyApi.getMyCurrentPlaybackState()
-      .then((response) => {
-        this.setState({
-          nowPlaying: { 
-              name: response.item.name,
-              artist: response.item.artists[0],
-              album: response.item.album.name,
-              albumArt: response.item.album.images[0].url
-          }
-        });
-      })
-    console.log(this.state);
-  }
 
   setNowPlaying() {
     const params = this.getHashParams();
