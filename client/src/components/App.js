@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button';
 import Home from './Home';
 import Explore from './Explore';
 import PageNavbar from './PageNavbar';
+import RelatedArtists from './RelatedArtists';
 import NowPlaying from './NowPlaying';
 import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
@@ -71,7 +72,7 @@ function ArtistPage() {
 
     // TODO: LINK FOR GENRES
     const genresDiv = artistInfo.genres.map((genre, i) =>
-      <a href="/"><Button/>{genre}</a>
+      <a href="#"><Button/>{genre}</a>
     ); 
 
     artistDiv = 
@@ -81,6 +82,9 @@ function ArtistPage() {
         </Row>
         <Row>
           {genresDiv}
+        </Row>
+        <Row>
+          <RelatedArtists artistId={artistId} />
         </Row>
       </Container>;
   }, err => {
@@ -113,25 +117,6 @@ export default class App extends React.Component {
         album: '', 
         albumArt: ''}
     }
-
-    this.getNowPlaying = this.getNowPlaying.bind(this);
-    this.getHashParams = this.getHashParams.bind(this);
-    this.setProfile = this.setProfile.bind(this);
-  }
-
-  componentDidMount() {
-    const params = this.getHashParams();
-    console.log(params);
-    const token = params.access_token;
-    if (token) {
-      spotifyApi.setAccessToken(token);
-    }
-    console.log("mounting");
-    console.log("token?")
-    console.log(token);
-    console.log(token ? true : false);
-    this.setState({loggedIn: token ? true : false});
-    this.setProfile();
   }
 
   getHashParams() {
@@ -160,36 +145,6 @@ export default class App extends React.Component {
       })
   }
 
-  setProfile() {
-    var profileDiv;
-    console.log("setting profile");
-    if (!this.state.loggedIn) {
-      profileDiv = (
-        <Container>
-          <a href="http://localhost:8888">
-            <Button>
-              Login to Spotify!
-            </Button>
-          </a>
-        </Container>
-      );
-    } else {
-      this.getNowPlaying();
-      profileDiv = (
-        <Container>
-          <NowPlaying
-            name={this.state.name}
-            artist={this.state.artist}
-            album={this.state.album}
-            albumArt={this.state.albumArt}
-          /> 
-        </Container>
-      );
-    }
-
-    this.setState({profileDiv: profileDiv});
-  }
-
 	render() {
 		return (
 			<div className="App">
@@ -209,6 +164,23 @@ export default class App extends React.Component {
                   </p>
                   <p>In the meantime, we've got some fun recommendations and statistics for you below.</p>
                 </Container>
+                <Container>
+                {!this.state.loggedIn && 
+                  <a href="http://localhost:8888">
+                  <Button>
+                    Login to Spotify!
+                  </Button>
+                  </a>}
+                {this.state.loggedIn && 
+                <Button onClick={this.getNowPlaying()}>
+                  Check my now playing!
+                </Button>}
+                <NowPlaying 
+                  name={this.state.nowPlaying.name} 
+                  artist={this.state.nowPlaying.artist}
+                  album={this.state.nowPlaying.album}
+                  albumArt={this.state.nowPlaying.albumArt}/>
+                </Container>
                 <Home/>
                 </>
               )}
@@ -222,7 +194,23 @@ export default class App extends React.Component {
 							render={() => (
                 <>
                 <PageNavbar />
-                {this.state.profileDiv}
+                <Container>
+                {!this.state.loggedIn && 
+                  <a href="http://localhost:8888">
+                  <Button>
+                    Login to Spotify!
+                  </Button>
+                  </a>}
+                {this.state.loggedIn && 
+                <Button onClick={this.getNowPlaying()}>
+                  Check my now playing!
+                </Button>}
+                <NowPlaying 
+                  name={this.state.nowPlaying.name} 
+                  artist={this.state.nowPlaying.artist}
+                  album={this.state.nowPlaying.album}
+                  albumArt={this.state.nowPlaying.albumArt}/>
+                </Container>
                 </>
               )}
 						/>
