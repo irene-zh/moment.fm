@@ -13,13 +13,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 /* ------------------- Route handler registration ----------------- */
 /* ---------------------------------------------------------------- */
 
-app.get('/artist/:name', routes.getArtist);
+app.get('/artist/:artistId', routes.getArtist);
 
-app.get('/song/:id', routes.getSong);
+app.get('/song/:songId', routes.getSong);
 
-app.get('/explore/songs/:title', routes.getRecommendedSongs);
+app.get('/explore/songs/:title', routes.searchSongs);
 
-app.get('/explore/artists/:artist_name', routes.getRecommendedArtists);
+app.get('/explore/artists/:name', routes.searchArtists);
+
+app.get('/related/artists/:name', routes.getRecommendedArtists);
 
 app.get('/iGotAFeeling/', routes.getIGotAFeeling);
 
