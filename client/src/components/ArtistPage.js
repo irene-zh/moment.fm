@@ -20,8 +20,10 @@ export default class ArtistPage extends React.Component {
 	};
 
   componentDidMount() {
+    const artistId = '';
+
     // Send an HTTP request to the server.
-    fetch("http://localhost:8081/artist/:name",
+    fetch("http://localhost:8081/artist/:" + artistId,
     {
       method: 'GET' // The type of HTTP request.
     }).then(res => {
