@@ -39,6 +39,16 @@ app.get('/saddestOf2020', routes.getSaddest2020);
 
 // app.get('/artistRelevance', routes.getArtistsRelevance);
 
+/*app.get('/login/user/:username', routes.getUser);
+
+app.get('/login/email/:email', routes.getEmail);
+
+app.get('/login/:username/:email/password', routes.getPassword);
+
+app.get('/user/:username/friends', routes.getFriends);
+
+app.get('/signup/:name/:username/:email/:password', routes.addUser);*/
+
 app.listen(8081, () => {
 	console.log('Server listening on PORT 8081');
 });
