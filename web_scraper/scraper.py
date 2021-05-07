@@ -2,6 +2,8 @@ import spotipy
 import sys
 from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
+from bs4 import BeautifulSoup
+import requests
 
 #connect to URL
 #https://medium.com/swlh/how-to-leverage-spotify-api-genius-lyrics-for-data-science-tasks-in-python-c36cdfb55cf3
@@ -12,33 +14,10 @@ secret = ""
 client_cred_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
 sp = spotipy.Spotify(client_credentials_manager=client_cred_manager)
 
-#insert the URI as a string into the function
-def get_album_tracks(uri_info):
-    uri = []
-    track = []
-    duration = []
-    explicit = []
-    track_number = []
-    one = sp.album_tracks(uri_info, limit=50, offset=0, market='US')
-    df1 = pd.DataFrame(one)
+path = 'tracks_modified.csv'
+data = pd.read_csv(path)
 
-    for i, x in df1['items'].items():
-        uri.append(x['uri'])
-        track.append(x['name'])
-        duration.append(x['duration_ms'])
-        explicit.append(x['explicit'])
-        track_number.append(x['track_number'])
-
-    df2 = pd.DataFrame({
-    'uri':uri,
-    'track':track,
-    'duration_ms':duration,
-    'explicit':explicit,
-    'track_number':track_number})
-
-    return df2
-
-bts = get_album_tracks('spotify:album:6mJZTV8lCqnwftYZa94bXS')
+tracks = pd.DataFrame(data)
 
 #function to scrape lyrics from genius
 def scrape_lyrics(artistname, songname):
@@ -48,6 +27,7 @@ def scrape_lyrics(artistname, songname):
     html = BeautifulSoup(page.text, 'html.parser')
     lyrics1 = html.find("div", class_="lyrics")
     lyrics2 = html.find("div", class_="Lyrics__Container-sc-1ynbvzw-2 jgQsqn")
+    print(artistname2)
     if lyrics1:
         lyrics = lyrics1.get_text()
     elif lyrics2:
@@ -56,12 +36,13 @@ def scrape_lyrics(artistname, songname):
         lyrics = None
     return lyrics
 
-#function to attach lyrics onto data frame
-#artist_name should be inserted as a string
-def lyrics_onto_frame(df1, artist_name):
-    for i,x in enumerate(df1['track']):
-        test = scrape_lyrics(artist_name, x)
-        df1.loc[i, 'lyrics'] = test
+def lyrics_df(df1):
+    lyrics = []
+    for id,artist in df1.itertuples(index=False):
+        temp = scrape_lyrics(artist,id)
+        lyrics.append(temp)
+        print(id, temp)
     return df1
 
-print(lyrics_onto_frame(bts, 'BTS'))
+tracks_df['lyrics'] = lyrics_df(tracks_df)
+tracks_df.to_csv('tracks_with_lyrics')
