@@ -1,53 +1,15 @@
-const connection = require('./oracleManager');
+const config = require('../db-config.js');
+const mysql = require('mysql');
 
-// Example function to show how to query OracleDB instance
-// Everything is the same except instead of (err, rows, fields) in
-// connection.query, it's just (rows)
-const getExample = (req, res) => {
-  const query = `
-    SELECT COUNT(*) AS CNT
-    FROM Songs
-  `;
-
-  connection.query(query, (rows) => {
-    res.json(rows);
-  });
-};
-
-//saddest songs (lowest energy) of 2020
-const getSaddest2020 = (req, res) => {
-  const query = `
-    SELECT s.track_id AS id, s.name AS name, s.artist AS artist
-	FROM Songs s
-	WHERE s.musical_mode = 0 AND s.duration_ms >= 120000 AND EXTRACT(YEAR FROM s.release_date) = 2020
-	ORDER BY s.danceability ASC, s.energy ASC, s.loudness ASC
-	FETCH NEXT 10 ROWS ONLY
-  `;
-
-  connection.query(query, (rows) => {
-    res.json(rows);
-  });
-};
-
-module.exports = {
-  getExample: getExample,
-  getSaddest2020: getSaddest2020,
-};
-
+config.connectionLimit = 10;
+const connection = mysql.createPool(config);
 
 /* -------------------------------------------------- */
 /* ------------------- Route Handlers --------------- */
 /* -------------------------------------------------- */
 
-/*
-// get song info by id
 const getSong = (req, res) => {
-  const songId = req.params.songId;
-  const query = `
-  SELECT s.name, s.artist, s.id, s.album, s.year
-  FROM songs s
-  WHERE s.id = ${songId};
-  `;
+  const query = ``;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -55,14 +17,8 @@ const getSong = (req, res) => {
   });
 };
 
-// get arist info by id
 const getArtist = (req, res) => {
-  const artistId = req.params.artistId;
-  const query = `
-  SELECT a.name, a.id 
-  FROM artists a
-  WHERE a.id = ${artistId};
-  `;
+  const query = ``;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -70,16 +26,8 @@ const getArtist = (req, res) => {
   });
 };
 
-// search for songs by title
-const searchSongs = (req, res) => {
-  const songTitle = req.params.song;
-  const query = `
-  SELECT s.name, s.artist, s.id, s.album, s.year
-  FROM songs s
-  WHERE s.title LIKE "%${songTitle}%";
-  ORDER BY s.popularity DESC
-  LIMIT 20;
-  `;
+const getRecommendedSongs = (req, res) => {
+  const query = ``;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -87,28 +35,8 @@ const searchSongs = (req, res) => {
   });
 };
 
-// search for artists by name
-const searchArtists = (req, res) => {
-  const artistName = req.params.name;
-  const query = `
-  SELECT a.name, a.id
-  FROM artist a
-  WHERE a.name LIKE "%${artistName}%";
-  ORDER BY s.popularity DESC
-  LIMIT 20;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get recommended artists for an input artist
 const getRecommendedArtists = (req, res) => {
-  const artistName = req.params.name;
-  const query = `
-  WITH convert_to_decade AS (
+  const query = `WITH convert_to_decade AS (
     SELECT s.year - (s.year % 10) as decade
     FROM song s
   ),
@@ -117,7 +45,7 @@ const getRecommendedArtists = (req, res) => {
     FROM artists a
     JOIN song s
     ON s.artist_name = a.name
-    WHERE a.name = ${artistName}
+    WHERE a.name = ${artist_name}
     GROUP BY s.decade
     ORDER BY COUNT(s.decade) DESC
     LIMIT 1
@@ -127,7 +55,7 @@ const getRecommendedArtists = (req, res) => {
     FROM artist a
     JOIN song s 
     ON a.name = s.artist_name
-  WHERE a.name = ${artistName}
+  WHERE a.name = ${artist_name}
     GROUP BY s.genre
     ORDER BY COUNT(s.genre) DESC
     LIMIT 5
@@ -158,7 +86,7 @@ const getRecommendedArtists = (req, res) => {
   JOIN same_genre sg
   ON sd.name = sg.name
   ORDER BY decade_cnt DESC, genre_cnt DESC
-  LIMIT 5;
+  LIMIT 5
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -167,7 +95,6 @@ const getRecommendedArtists = (req, res) => {
   });
 };
 
-// get songs most like I Got a Feeling by Black Eyed Peas
 const getIGotAFeeling = (req, res) => {
   const query = `
   WITH got_a_feeling AS (
@@ -183,7 +110,7 @@ const getIGotAFeeling = (req, res) => {
   AND ABS(s.liveness - got_a_feeling.liveness) < .05
   AND ABS(s.loudness - got_a_feeling.loudness) < .05
   AND s.name <> "I got a Feeling"
-  LIMIT 5;
+  LIMIT 5
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -192,7 +119,6 @@ const getIGotAFeeling = (req, res) => {
   });
 };
 
-// get the saddest songs of 2020 
 const getSaddest2020 = (req, res) => {
   const query = `
   SELECT s.id AS id, s.name AS name, s.artist AS artist, s.year AS year
@@ -211,7 +137,6 @@ const getSaddest2020 = (req, res) => {
   });
 };
 
-// get the most popular songs by the most popular hiphop artist of 2018
 const getHipHop2018 = (req, res) => {
   const query = `
   WITH top_hiphop AS (
@@ -239,7 +164,6 @@ const getHipHop2018 = (req, res) => {
   });
 };
 
-// get the top metal songs of 2005
 const getMetal2005 = (req, res) => {
   const query = `
   SELECT s.id as id, s.name AS name, s.artist AS artist, s.year AS year
@@ -254,7 +178,6 @@ const getMetal2005 = (req, res) => {
   });
 };
 
-// get the most popular songs of 2020 by the most popular artists of 2019
 const getSongsPopular2020 = (req, res) => {
   const query = `
   WITH avg_popularity_2019 AS(
@@ -284,7 +207,6 @@ const getSongsPopular2020 = (req, res) => {
   });
 };
 
-// get the artists who released the most songs in 2019
 const getArtistsFrequent2019 = (req, res) => {
   const query = `
   SELECT artist.name AS name
@@ -303,7 +225,6 @@ const getArtistsFrequent2019 = (req, res) => {
   });
 };
 
-// get the most active artists in pop (number of songs / years active) 
 const getArtistsActivePop = (req, res) => {
   const query = `
   WITH years_active AS (
@@ -327,7 +248,7 @@ const getArtistsActivePop = (req, res) => {
   SELECT a.name
   FROM artist_activity a
   ORDER BY a.activity DESC
-  LIMIT 10;
+  LIMIT 10
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -336,7 +257,6 @@ const getArtistsActivePop = (req, res) => {
   });
 };
 
-// get most relevant artists
 const getArtistsRelevance = (req, res) => {
   const query = `
   WITH top_artists AS(
@@ -368,7 +288,7 @@ const getArtistsRelevance = (req, res) => {
     GROUP BY artist
   )
   SELECT a.artist, (num_hits_1*num_hits_2)
-  FROM num_hits_1 a JOIN num_hits_2 b ON a.artist = b.artist; 
+  FROM num_hits_1 a JOIN num_hits_2 b ON a.artist = b.artist  
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -376,97 +296,12 @@ const getArtistsRelevance = (req, res) => {
     else res.json(rows);
   });
 };
-
-// get password for input username and email
-const getPassword = (req, res) => {
-  const username = req.params.username;
-  const email = req.params.email;
-  const query = `
-  SELECT u.password
-  FROM users u
-  WHERE u.username = ${username}
-  AND u.email = ${email}
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get friend's usernames
-const getFriends = (req, res) => {
-  const username = req.params.username;
-  const query = `
-  WITH user_email AS (
-    SELECT u.email
-    FROM users u
-    WHERE u.username = ${username}
-  )
-  SELECT u.username AS friend
-  FROM friends f
-  JOIN users u
-  ON f.friend_email = u.email
-  WHERE f.user_email IN user_email
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-const getUser = (req, res) => {
-  const username = req.params.username;
-  const query = `
-  SELECT COUNT(u.username) AS cnt
-  FROM users u
-  WHERE u.username = ${username}
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-const getEmail = (req, res) => {
-  const email = req.params.email;
-  const query = `
-  SELECT COUNT(u.email) AS cnt
-  FROM users u
-  WHERE u.email = ${email}
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-const addUser = (req, res) => {
-  const username = req.params.username;
-  const email = req.params.email;
-  const password = req.params.password; 
-  const name = req.params.name;
-
-  const query = `
-  INSERT INTO users(name, username, email, password) 
-  (${name}, ${username}, ${email}, ${password})
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-  });
-};
-
 
 module.exports = {
   getSong: getSong,
 	getArtist: getArtist,
 	getRecommendedArtists: getRecommendedArtists,
-  searchSongs: searchSongs,
-  searchArtists: searchArtists,
+  getRecommendedSongs: getRecommendedSongs,
   getIGotAFeeling: getIGotAFeeling,
   getSaddest2020: getSaddest2020,
   getHipHop2018: getHipHop2018,
@@ -474,11 +309,5 @@ module.exports = {
   getSongsPopular2020: getSongsPopular2020,
   getArtistsFrequent2019: getArtistsFrequent2019,
   getArtistsActivePop: getArtistsActivePop,
-  getArtistsRelevance: getArtistsRelevance, 
-  getPassword: getPassword,
-  getFriends: getFriends, 
-  getUser: getUser,
-  getEmail: getEmail, 
-  addUser: addUser
+  getArtistsRelevance: getArtistsRelevance
 };
-*/
