@@ -39,6 +39,10 @@ app.get('/activePop', routes.getArtistsActivePop);
 
 app.get('/artistRelevance', routes.getArtistsRelevance);
 
+app.get('/login/:username', routes.getPassword);
+
+app.get('/users/:username/friends', routes.getFriends);
+
 app.listen(8081, () => {
 	console.log('Server listening on PORT 8081');
 });

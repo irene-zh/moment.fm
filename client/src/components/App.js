@@ -5,17 +5,22 @@ import {
 	Switch,
   useParams
 } from 'react-router-dom';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
+import {
+  Container,
+  Row,
+  Button,
+  Form
+} from 'react-bootstrap';
 import Home from './Home';
 import Explore from './Explore';
 import PageNavbar from './PageNavbar';
 import RelatedArtists from './RelatedArtists';
 import NowPlaying from './NowPlaying';
+import SpotifySongRow from './SpotifySongRow';
 import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
 
+/* functional component to render page for song */
 function SongPage() {
   let { songId } = useParams();
   var songDiv;
@@ -54,6 +59,7 @@ function SongPage() {
   );
 }
 
+/* functional component to render page for artist */
 function ArtistPage() {
   let { artistId } = useParams();
   var artistDiv;
@@ -100,6 +106,57 @@ function ArtistPage() {
   );
 }
 
+/* functional component to render profile / login page */
+function Profile(props) {
+  var outdiv;
+  if (props.loggedIn) {
+    outdiv = (
+      <>
+      <PageNavbar />
+      <Container>
+      Welcome {props.username}!
+      </Container>
+      </>
+    );
+  } else {
+    outdiv = (
+      <>
+      <PageNavbar />
+      <Container>
+      <Form onSubmit={props.submitLoginForm}>
+        <Form.Group controlId="formUsername">
+          <Form.Label>Username</Form.Label>
+          <Form.Control type="text" placeholder="Enter username" />
+          <Form.Text className="text-muted">
+            choose a unique username
+          </Form.Text>
+        </Form.Group>
+
+        <Form.Group controlId="formBasicEmail">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control type="email" placeholder="Enter email" />
+          <Form.Text className="text-muted">
+            to set up your account!
+          </Form.Text>
+        </Form.Group>
+  
+        <Form.Group controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control type="password" placeholder="Password" />
+        </Form.Group>
+        <Button type="submit">
+          Let's go!
+        </Button>
+      </Form>
+      </Container>
+      </>
+    );
+  }
+
+  return outdiv;
+}
+
+/* main app */
 export default class App extends React.Component {
   constructor(){
     super();
@@ -109,14 +166,21 @@ export default class App extends React.Component {
       spotifyApi.setAccessToken(token);
     }
     this.state = {
-      profileDiv: [],
-      loggedIn: token ? true : false,
+      email: '',
+      username: '',
+      loggedIn: false,
+      spotifyLoggedIn: token ? true : false,
+      recentTracks: [],
       nowPlaying: {
         name: '', 
         artist: '',
         album: '', 
         albumArt: ''}
     }
+
+    this.getHashParams = this.getHashParams.bind(this);
+    this.getNowPlaying = this.getNowPlaying.bind(this);
+    this.getRecentTracks = this.getRecentTracks.bind(this);
   }
 
   getHashParams() {
@@ -142,7 +206,47 @@ export default class App extends React.Component {
             albumArt: response.item.album.images[0].url
           }
         });
-      })
+      }, err => {
+        console.log(err)
+      });
+  }
+
+  getRecentTracks() {
+    spotifyApi.getMyRecentlyPlayedTracks()
+      .then((response) => {
+        response.json();
+      }, err => {
+        console.log(err);
+      }).then(recentTracks => {
+        if (!recentTracks) return;
+
+        const tracksDiv = recentTracks.map((song, i) => {
+          <SpotifySongRow 
+            name={song.item[i].name}
+            artist={song.item[i].artist[0].name}
+            album={song.item[i].album.name}
+            albumArt={song.item[i].album.images[0].url}
+          />
+        });
+
+        this.setState({recentTracks: tracksDiv});
+      }, err => {
+        console.log(err);
+      });
+  }
+
+  submitLoginForm(event) {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    console.log("submitting!");
+    console.log(event);
+    console.log(event.target.value);
+
+    this.setState({loggedIn: true});
   }
 
 	render() {
@@ -165,13 +269,13 @@ export default class App extends React.Component {
                   <p>In the meantime, we've got some fun recommendations and statistics for you below.</p>
                 </Container>
                 <Container>
-                {!this.state.loggedIn && 
+                {!this.state.spotifyLoggedIn && 
                   <a href="http://localhost:8888">
                   <Button>
                     Login to Spotify!
                   </Button>
                   </a>}
-                {this.state.loggedIn && 
+                {this.state.spotifyLoggedIn && 
                 <Button onClick={this.getNowPlaying()}>
                   Check my now playing!
                 </Button>}
@@ -189,31 +293,12 @@ export default class App extends React.Component {
 							exact path="/Explore"
 							render={() => <Explore />}
 						/>
-						<Route
-							exact path="/Profile"
-							render={() => (
-                <>
-                <PageNavbar />
-                <Container>
-                {!this.state.loggedIn && 
-                  <a href="http://localhost:8888">
-                  <Button>
-                    Login to Spotify!
-                  </Button>
-                  </a>}
-                {this.state.loggedIn && 
-                <Button onClick={this.getNowPlaying()}>
-                  Check my now playing!
-                </Button>}
-                <NowPlaying 
-                  name={this.state.nowPlaying.name} 
-                  artist={this.state.nowPlaying.artist}
-                  album={this.state.nowPlaying.album}
-                  albumArt={this.state.nowPlaying.albumArt}/>
-                </Container>
-                </>
-              )}
-						/>
+						<Route exact path="/Profile">
+              <Profile 
+                loggedIn={this.state.loggedIn} 
+                submitLoginForm={this.submitLoginForm.bind(this)} 
+                username={this.state.username} />
+            </Route>
             <Route path="/artist/:artistId">
               <ArtistPage />
             </Route>
