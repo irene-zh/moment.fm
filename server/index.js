@@ -15,6 +15,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/example', routes.getExample);
 
+app.get('/saddestOf2020', routes.getSaddest2020);
+
 // app.get('/artist/:name', routes.getArtist);
 
 // app.get('/song/:id', routes.getSong);
@@ -24,8 +26,6 @@ app.get('/example', routes.getExample);
 // app.get('/explore/artists/:artist_name', routes.getRecommendedArtists);
 
 // app.get('/iGotAFeeling/', routes.getIGotAFeeling);
-
-// app.get('/saddestOf2020', routes.getSaddest2020);
 
 // app.get('/hiphop2018', routes.getHipHop2018);
 
