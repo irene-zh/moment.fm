@@ -168,6 +168,7 @@ function UserPage() {
 /* functional component to render login/signup page */
 function Login(props) {
   var outdiv;
+
   if (props.loggedIn) {
     outdiv = (
       <>
@@ -182,10 +183,18 @@ function Login(props) {
       <>
       <PageNavbar />
       <Container>
-      <Form onSubmit={props.submitLoginForm}>
-        <Form.Group controlId="formUsername">
+      <Form onSubmit={(e) => props.submitLoginForm(e)}>
+        <Form.Group>
+          <Form.Label>Name</Form.Label>
+          <Form.Control id="name" type="text" placeholder="Enter name" />
+          <Form.Text className="text-muted">
+            what's your name!!?
+          </Form.Text>
+        </Form.Group>
+
+        <Form.Group>
           <Form.Label>Username</Form.Label>
-          <Form.Control type="text" placeholder="Enter username" />
+          <Form.Control id="username" type="text" placeholder="Enter username" />
           <Form.Text className="text-muted">
             choose a unique username
           </Form.Text>
@@ -193,7 +202,7 @@ function Login(props) {
 
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" />
+          <Form.Control id="email" type="email" placeholder="Enter email" />
           <Form.Text className="text-muted">
             to set up your account!
           </Form.Text>
@@ -201,7 +210,7 @@ function Login(props) {
   
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" />
+          <Form.Control id="password" type="password" placeholder="Password" />
         </Form.Group>
         <Button type="submit">
           Let's go!
@@ -240,6 +249,8 @@ export default class App extends React.Component {
     this.getHashParams = this.getHashParams.bind(this);
     this.getNowPlaying = this.getNowPlaying.bind(this);
     this.getRecentTracks = this.getRecentTracks.bind(this);
+    this.checkExistingUser = this.checkExistingUser.bind(this);
+    this.createNewUser = this.createNewUser.bind(this);
   }
 
   getHashParams() {
@@ -294,18 +305,98 @@ export default class App extends React.Component {
       });
   }
 
+  checkExistingUser(username, email, password) {
+
+  }
+
+  createNewUser(username, email, password) {
+
+  }
+
   submitLoginForm(event) {
+    console.log("submitting!");
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    console.log("submitting!");
-    console.log(event);
-    console.log(event.target.value);
+    var name = document.getElementById('name').value;
+    var username = document.getElementById('username').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
 
-    this.setState({loggedIn: true});
+    if (!name || !username || !email || !password) {
+      return;
+    }
+    console.log(name, username, email, password);
+
+    var userExists = false; 
+    var emailExists = false;
+    // check if user with this username exists
+    fetch("http://localhost:8081/login/user/:" + username, {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(res => {
+      if (!res) return;
+      userExists = (res.cnt > 0);
+      console.log(userExists);
+    }, err => {
+      console.log(err);
+    });
+    // check if user with this email exists
+    fetch("http://localhost:8081/login/email/:" + email, {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(res => {
+      if (!res) return;
+      userExists = (res.cnt > 0);
+      console.log(emailExists);
+    }, err => {
+      console.log(err);
+    });
+
+    if (userExists || emailExists) {
+      // successful login if passwords match for input username
+      fetch("http://localhost:8081/login/:" + username + ":/" + email + "/password", {
+        method: 'GET'
+      }).then(res => {
+        return res.json();
+      }, err => {
+        console.log(err);
+      }).then(res => {
+        if (!res) return;
+        if (res.password === password) {
+          this.setState({loggedIn: true, 
+                         username: username,
+                         email: email});
+          return;
+        }
+      }, err => {
+        console.log(err);
+      });
+    }
+
+    if (!userExists && !emailExists) {
+      fetch("http://localhost:8081/signup/:" + name + ":/" + username + ":/" + email + "/:" + password, {
+        method: 'GET'
+      }, err => {
+        console.log(err);
+      })
+      console.log("user created!");
+      this.setState({loggedIn: true, 
+                     username: username,
+                     email: email});
+      return;
+    }
+
+    return;
   }
 
 	render() {
@@ -356,7 +447,8 @@ export default class App extends React.Component {
               <Login 
                 loggedIn={this.state.loggedIn} 
                 submitLoginForm={this.submitLoginForm.bind(this)} 
-                username={this.state.username} />
+                username={this.state.username}
+              />
             </Route>
             <Route path="/artist/:artistId">
               <ArtistPage />

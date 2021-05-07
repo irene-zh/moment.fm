@@ -345,13 +345,15 @@ const getArtistsRelevance = (req, res) => {
   });
 };
 
-/* get password for input username */
+/* get password for input username and email*/
 const getPassword = (req, res) => {
   const username = req.params.username;
+  const email = req.params.email;
   const query = `
   SELECT u.password
   FROM users u
-  WHERE u.username = ${username};
+  WHERE u.username = ${username}
+  AND u.email = ${email}
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -373,12 +375,56 @@ const getFriends = (req, res) => {
   FROM friends f
   JOIN users u
   ON f.friend_email = u.email
-  WHERE f.user_email IN user_email;
+  WHERE f.user_email IN user_email
   `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
+  });
+};
+
+const getUser = (req, res) => {
+  const username = req.params.username;
+  const query = `
+  SELECT COUNT(u.username) AS cnt
+  FROM users u
+  WHERE u.username = ${username}
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
+
+const getEmail = (req, res) => {
+  const email = req.params.email;
+  const query = `
+  SELECT COUNT(u.email) AS cnt
+  FROM users u
+  WHERE u.email = ${email}
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+    else res.json(rows);
+  });
+};
+
+const addUser = (req, res) => {
+  const username = req.params.username;
+  const email = req.params.email;
+  const password = req.params.password; 
+  const name = req.params.name;
+
+  const query = `
+  INSERT INTO users(name, username, email, password) 
+  (${name}, ${username}, ${email}, ${password})
+  `;
+
+  connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
   });
 };
 
@@ -397,5 +443,8 @@ module.exports = {
   getArtistsActivePop: getArtistsActivePop,
   getArtistsRelevance: getArtistsRelevance, 
   getPassword: getPassword,
-  getFriends: getFriends
+  getFriends: getFriends, 
+  getUser: getUser,
+  getEmail: getEmail, 
+  addUser: addUser
 };
