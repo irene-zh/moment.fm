@@ -369,7 +369,7 @@ const getFriends = (req, res) => {
     FROM users u
     WHERE u.username = ${username}
   )
-  SELECT u.username
+  SELECT u.username AS friend
   FROM friends f
   JOIN users u
   ON f.friend_email = u.email

@@ -9,7 +9,9 @@ import {
   Container,
   Row,
   Button,
-  Form
+  Form,
+  Accordion,
+  Card
 } from 'react-bootstrap';
 import Home from './Home';
 import Explore from './Explore';
@@ -106,8 +108,65 @@ function ArtistPage() {
   );
 }
 
-/* functional component to render profile / login page */
-function Profile(props) {
+/* functional component to render profile page for user */
+function UserPage() {
+  let { username } = useParams();
+  const userDiv = (
+    <Container>
+      <Row>
+      <h3>{username}</h3>
+      </Row>
+    </Container>
+  );
+  var friendsDiv, friendsList;
+
+  fetch("http://localhost:8081/user/:" + username + "/friends",
+  {
+    method: 'GET' // The type of HTTP request.
+  }).then(res => {
+    // Convert the response data to a JSON.
+    return res.json();
+  }, err => {
+    // Print the error if there is one.
+    console.log(err);
+  }).then(userInfo => {
+    if (!userInfo) return;
+
+    friendsList = userInfo.map((friend, i) =>
+      <Card.Body><a href={"/user/" + friend}>{friend}</a></Card.Body>
+    );
+
+    friendsDiv = 
+      <Container>
+        <Accordion defaultActiveKey="0">
+          <Card>
+            <Card.Header>
+              <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                {userInfo.friend.length} Friends
+              </Accordion.Toggle>
+            </Card.Header>
+            <Accordion.Collapse eventKey="0">
+              {friendsList}
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
+      </Container>;
+  }, err => {
+    // Print the error if there is one.
+    console.log(err);
+  });
+
+  return (
+  <>
+  <PageNavbar />
+  {userDiv}
+  {friendsDiv}
+  </>
+  );
+}
+
+/* functional component to render login/signup page */
+function Login(props) {
   var outdiv;
   if (props.loggedIn) {
     outdiv = (
@@ -293,8 +352,8 @@ export default class App extends React.Component {
 							exact path="/Explore"
 							render={() => <Explore />}
 						/>
-						<Route exact path="/Profile">
-              <Profile 
+						<Route exact path="/Login">
+              <Login 
                 loggedIn={this.state.loggedIn} 
                 submitLoginForm={this.submitLoginForm.bind(this)} 
                 username={this.state.username} />
@@ -304,6 +363,9 @@ export default class App extends React.Component {
             </Route>
             <Route path="/song/:songId">
               <SongPage />
+            </Route>
+            <Route path="/user/:username">
+              <UserPage />
             </Route>
 					</Switch>
 				</Router>
