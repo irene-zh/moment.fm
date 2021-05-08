@@ -14,13 +14,13 @@ const getExample = (req, res) => {
   });
 };
 
-//saddest songs (lowest energy) of 2020
+// saddest songs (lowest energy) of 2020
 const getSaddest2020 = (req, res) => {
   const query = `
   SELECT DISTINCT s.track_id AS id, s.name AS name, s.artist AS artist
 	FROM Songs s
 	WHERE s.musical_mode = 0 AND s.duration_ms >= 120000 AND EXTRACT(YEAR FROM s.release_date) = 2020
-	ORDER BY s.danceability ASC, s.energy ASC, s.loudness ASC
+	ORDER BY s.danceability ASC, s.energy ASC, s.loudness ASC, s.popularity DESC
 	FETCH NEXT 5 ROWS ONLY
   `;
 
@@ -29,8 +29,7 @@ const getSaddest2020 = (req, res) => {
   });
 };
 
-
-// get song info by id: EDITED
+// get song info by id
 const getSong = (req, res) => {
   const songId = req.params.id;
   const query = `
@@ -45,7 +44,7 @@ const getSong = (req, res) => {
   });
 };
 
-// get arist info by id: EDITED
+// get arist info by id
 const getArtist = (req, res) => {
   const artistId = req.params.id;
   const query = `
@@ -60,7 +59,7 @@ const getArtist = (req, res) => {
   });
 };
 
-// search for songs by title: EDITED
+// search for songs by title
 const searchSongs = (req, res) => {
   const songName = req.params.name;
   const query = `
@@ -77,7 +76,7 @@ const searchSongs = (req, res) => {
   });
 };
 
-// search for artists by name: EDITED
+// search for artists by name
 const searchArtists = (req, res) => {
   const artistName = req.params.name;
   const query = `
@@ -157,33 +156,33 @@ const getRecommendedArtists = (req, res) => {
     else res.json(rows);
   });
 };*/
-/*
-// get songs most like I Got a Feeling by Black Eyed Peas
+
+// get songs most like I Gotta Feeling by Black Eyed Peas
 const getIGotAFeeling = (req, res) => {
   const query = `
   WITH got_a_feeling AS (
-    SELECT s.acousticness, s.danceability, s.liveness, s.loudness
+    SELECT s.energy, s.danceability, s.tempo, s.loudness
     FROM songs s
-    WHERE s.name = "I got a Feeling" 
-    AND s.artist_name = "Black Eyed Peas"
+    WHERE LOWER(s.name) = LOWER('I gotta Feeling') AND s.artist = 'Black Eyed Peas'
+      FETCH NEXT 1 ROWS ONLY
   )
-  SELECT s.id AS id, s.name AS name, s.artist AS artist, s.year AS year
-  FROM songs s, got_a_feeling
-  WHERE ABS(s.acousticness - got_a_feeling.acousticness) < .05
-  AND ABS(s.danceability - got_a_feeling.danceability) < .05
-  AND ABS(s.liveness - got_a_feeling.liveness) < .05
-  AND ABS(s.loudness - got_a_feeling.loudness) < .05
-  AND s.name <> "I got a Feeling"
-  LIMIT 5;
+  SELECT DISTINCT s.track_id AS id, s.name AS name, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year, s.popularity
+  FROM songs s, got_a_feeling g
+  WHERE 
+    ABS(s.tempo - g.tempo) < 10 AND
+    ABS(s.danceability - g.danceability) < .1 AND
+    ABS(s.energy - g.energy) < .1
+  ORDER BY s.popularity DESC
+  FETCH NEXT 5 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};*/
+};
 
-// get the most popular songs by the most popular hiphop artist of 2018: EDITED
+// get the most popular songs by the most popular hiphop artist of 2018
 const getHipHop2018 = (req, res) => {
   const query = `
   WITH top_hiphop AS (
@@ -212,23 +211,22 @@ const getHipHop2018 = (req, res) => {
   });
 };
 
-/*
 // get the top metal songs of 2005
 const getMetal2005 = (req, res) => {
   const query = `
-  SELECT s.id as id, s.name AS name, s.artist AS artist, s.year AS year
-  FROM songs s
+  SELECT DISTINCT s.name as name, s.track_id AS id, s.artist as artist, EXTRACT(year FROM s.release_date) AS year
+  FROM Songs s
   ORDER BY s.liveness DESC
-  LIMIT 10;
+  FETCH FIRST 5 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};*/
+};
 
-// get the most popular songs of 2020 by the most popular artists of 2019: EDITED
+// get the most popular songs of 2020 by the most popular artists of 2019
 const getSongsPopular2020 = (req, res) => {
   const query = `
   WITH avg_popularity_2019 AS(
@@ -256,7 +254,7 @@ const getSongsPopular2020 = (req, res) => {
   });
 };
 
-// get the artists who released the most songs in 2019: EDITED
+// get the artists who released the most songs in 2019
 const getArtistsFrequent2019 = (req, res) => {
   const query = `
   SELECT DISTINCT a.name AS name
@@ -275,7 +273,7 @@ const getArtistsFrequent2019 = (req, res) => {
   });
 };
 
-// get the most active artists in pop (number of songs / years active): EDITED
+// get the most active artists in pop (number of songs / years active)
 const getArtistsActivePop = (req, res) => {
   const query = `
   WITH years_active AS (
@@ -353,7 +351,7 @@ const getArtistsRelevance = (req, res) => {
   });
 };*/
 
-// get password for input username and email: EDITED
+// get password for input username and email
 const getPassword = (req, res) => {
   const username = req.params.username;
   const email = req.params.email;
@@ -393,7 +391,7 @@ const getFriends = (req, res) => {
   });
 };
 
-// get number of users with this username (checks username validity): EDITED
+// get number of users with this username (checks username validity)
 const getUser = (req, res) => {
   const username = req.params.username;
   const query = `
@@ -408,7 +406,7 @@ const getUser = (req, res) => {
   });
 };
 
-// get number of users with this email (checks email validity): EDITED
+// get number of users with this email (checks email validity)
 const getEmail = (req, res) => {
   const email = req.params.email;
   const query = `
@@ -440,7 +438,6 @@ const addUser = (req, res) => {
   });
 };
 
-
 module.exports = {
   getExample: getExample,
   getSong: getSong,
@@ -448,10 +445,10 @@ module.exports = {
 	//getRecommendedArtists: getRecommendedArtists,
   searchSongs: searchSongs,
   searchArtists: searchArtists,
-  //getIGotAFeeling: getIGotAFeeling,
+  getIGotAFeeling: getIGotAFeeling,
   getSaddest2020: getSaddest2020,
   getHipHop2018: getHipHop2018,
-  //getMetal2005: getMetal2005,
+  getMetal2005: getMetal2005,
   getSongsPopular2020: getSongsPopular2020,
   getArtistsFrequent2019: getArtistsFrequent2019,
   getArtistsActivePop: getArtistsActivePop,

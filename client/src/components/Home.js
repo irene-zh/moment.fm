@@ -56,7 +56,7 @@ export default class Home extends React.Component {
     const contents = (
       <Card>
         <Card.Body>
-          <Card.Title>We know you love "I got a Feeling"</Card.Title>
+          <Card.Title>We know you love "I Gotta Feeling"</Card.Title>
           <Card.Subtitle>so here's some songs just like it</Card.Subtitle>
           {resultsDiv}
         </Card.Body>
