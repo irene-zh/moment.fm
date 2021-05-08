@@ -37,7 +37,7 @@ app.get('/frequency2019', routes.getArtistsFrequent2019);
 
 app.get('/activePop', routes.getArtistsActivePop);
 
-// app.get('/related/artists/:name', routes.getRecommendedArtists);
+app.get('/related/artists/:id', routes.getRecommendedArtists);
 
 // app.get('/artistRelevance', routes.getArtistsRelevance);
 

@@ -93,69 +93,59 @@ const searchArtists = (req, res) => {
   });
 };
 
-/*
 // get recommended artists for an input artist
 const getRecommendedArtists = (req, res) => {
-  const artistName = req.params.name;
+  const artistId = req.params.id;
   const query = `
   WITH convert_to_decade AS (
-    SELECT s.year - (s.year % 10) as decade
-    FROM song s
+    SELECT s.track_id, s.name, s.artist, s.artist_id, EXTRACT(year FROM s.release_date) - MOD(EXTRACT(year FROM s.release_date), 10) as decade
+    FROM songs s
   ),
-  most_active AS (
-    SELECT s.decade
-    FROM artists a
-    JOIN song s
-    ON s.artist_name = a.name
-    WHERE a.name = ${artistName}
-    GROUP BY s.decade
-    ORDER BY COUNT(s.decade) DESC
-    LIMIT 1
+  most_active_decade AS (
+    SELECT c.decade AS decade
+    FROM convert_to_decade c
+      WHERE c.artist_id = '${artistId}'
+    GROUP BY c.decade
+    ORDER BY COUNT(*) DESC
+    FETCH NEXT 1 ROWS ONLY
   ),
-  top_genres AS (
-    SELECT s.genre
-    FROM artist a
-    JOIN song s 
-    ON a.name = s.artist_name
-  WHERE a.name = ${artistName}
-    GROUP BY s.genre
-    ORDER BY COUNT(s.genre) DESC
-    LIMIT 5
+  this_genre AS (
+      SELECT a.genre AS genre
+      FROM artists a
+      WHERE a.artist_id = '${artistId}'
+    FETCH NEXT 1 ROWS ONLY
+  ), 
+  same_genre AS (
+      SELECT DISTINCT a.name AS name, a.artist_id AS artist_id, a.popularity AS popularity 
+      FROM artists a, this_genre t
+      WHERE a.genre IN t.genre
   ),
   same_decade AS (
-    SELECT a.name as name, COUNT(s.name) AS decade_cnt
-    FROM artists a
-    JOIN song s
-    ON a.name = s.artist_name
-    WHERE s.year >= most_active
-    AND s.year <= most_active + 9
-    GROUP BY s.artist_name
-  ),
-  In_genre_helper AS (
-  SELECT 1 as n, s.artist AS artist_name
-  FROM song s
-  WHERE s.genre IN top_genres
+    SELECT DISTINCT a.artist_id AS artist_id, COUNT(s.name) AS decade_cnt
+      FROM most_active_decade m, same_genre g, artists a
+    JOIN songs s
+    ON a.artist_id = s.artist_id
+    WHERE EXTRACT(year FROM s.release_date) >= m.decade
+    AND EXTRACT(year FROM s.release_date) <= m.decade + 9
+      AND a.artist_id IN g.artist_id
+    GROUP BY a.artist_id
   )
-  same_genres AS (
-    SELECT a.name AS name, COUNT(n) AS genre_cnt
-    FROM artists a
-    JOIN in_genre_helper h
-    ON a.name = in_genre_helper.artist_name
-    GROUP BY a.name
-  )
-  SELECT artist_name
+  SELECT a.name, sd.artist_id, sd.decade_cnt, sg.popularity
   FROM same_decade sd
+  JOIN artists a
+  ON a.artist_id = sd.artist_id
   JOIN same_genre sg
-  ON sd.name = sg.name
-  ORDER BY decade_cnt DESC, genre_cnt DESC
-  LIMIT 5;
+  ON sg.artist_id = sd.artist_id
+  WHERE a.artist_id <> '${artistId}'
+  ORDER BY decade_cnt DESC, sg.popularity DESC
+  FETCH NEXT 5 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};*/
+};
 
 // get songs most like I Gotta Feeling by Black Eyed Peas
 const getIGotAFeeling = (req, res) => {
@@ -442,7 +432,7 @@ module.exports = {
   getExample: getExample,
   getSong: getSong,
 	getArtist: getArtist,
-	//getRecommendedArtists: getRecommendedArtists,
+	getRecommendedArtists: getRecommendedArtists,
   searchSongs: searchSongs,
   searchArtists: searchArtists,
   getIGotAFeeling: getIGotAFeeling,
