@@ -21,7 +21,7 @@ export default class RelatedArtists extends React.Component {
     const artistId = this.props.artistId;
 
     // Send an HTTP request to the server.
-    fetch("http://localhost:8081/related/artists/:" + artistId,
+    fetch("http://localhost:8081/related/artists/" + artistId,
     {
       method: 'GET' // The type of HTTP request.
     }).then(res => {

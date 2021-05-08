@@ -29,7 +29,7 @@ function SongPage() {
   var songDiv;
 
   // Send an HTTP request to the server.
-  fetch("http://localhost:8081/song/:" + songId,
+  fetch("http://localhost:8081/song/" + songId,
   {
     method: 'GET' // The type of HTTP request.
   }).then(res => {
@@ -67,7 +67,7 @@ function ArtistPage() {
   let { artistId } = useParams();
   var artistDiv;
 
-  fetch("http://localhost:8081/artist/:" + artistId,
+  fetch("http://localhost:8081/artist/" + artistId,
   {
     method: 'GET' // The type of HTTP request.
   }).then(res => {
@@ -121,7 +121,7 @@ function UserPage() {
   );
   var friendsDiv, friendsList;
 
-  fetch("http://localhost:8081/user/:" + username + "/friends",
+  fetch("http://localhost:8081/user/" + username + "/friends",
   {
     method: 'GET' // The type of HTTP request.
   }).then(res => {
@@ -333,7 +333,7 @@ export default class App extends React.Component {
     var userExists = false; 
     var emailExists = false;
     // check if user with this username exists
-    fetch("http://localhost:8081/login/user/:" + username, {
+    fetch("http://localhost:8081/login/user/" + username, {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -347,7 +347,7 @@ export default class App extends React.Component {
       console.log(err);
     });
     // check if user with this email exists
-    fetch("http://localhost:8081/login/email/:" + email, {
+    fetch("http://localhost:8081/login/email/" + email, {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -364,7 +364,7 @@ export default class App extends React.Component {
 
     if (userExists || emailExists) {
       // successful login if passwords match for input username
-      fetch("http://localhost:8081/login/:" + username + ":/" + email + "/password", {
+      fetch("http://localhost:8081/login/" + username + "/" + email + "/password", {
         method: 'GET'
       }).then(res => {
         return res.json();
@@ -384,7 +384,7 @@ export default class App extends React.Component {
     }
 
     if (!userExists && !emailExists) {
-      fetch("http://localhost:8081/signup/:" + name + ":/" + username + ":/" + email + "/:" + password, {
+      fetch("http://localhost:8081/signup/" + name + "/" + username + "/" + email + "/" + password, {
         method: 'GET'
       }, err => {
         console.log(err);
