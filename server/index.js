@@ -27,15 +27,15 @@ app.get('/explore/artists/:name', routes.searchArtists);
 
 // app.get('/iGotAFeeling/', routes.getIGotAFeeling);
 
-// app.get('/hiphop2018', routes.getHipHop2018);
+app.get('/hiphop2018', routes.getHipHop2018);
 
 // app.get('/metal2005', routes.getMetal2005);
 
-// app.get('/popular2020', routes.getSongsPopular2020);
+app.get('/popular2020', routes.getSongsPopular2020);
 
-// app.get('/frequency2019', routes.getArtistsFrequent2019);
+app.get('/frequency2019', routes.getArtistsFrequent2019);
 
-// app.get('/activePop', routes.getArtistsActivePop);
+app.get('/activePop', routes.getArtistsActivePop);
 
 // app.get('/artistRelevance', routes.getArtistsRelevance);
 

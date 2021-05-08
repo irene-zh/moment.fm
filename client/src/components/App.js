@@ -341,7 +341,8 @@ export default class App extends React.Component {
       console.log(err);
     }).then(res => {
       if (!res) return;
-      userExists = (res.cnt > 0);
+      userExists = (res.rows.cnt > 0);
+      console.log(res.rows.cnt);
       console.log(userExists);
     }, err => {
       console.log(err);
@@ -355,12 +356,13 @@ export default class App extends React.Component {
       console.log(err);
     }).then(res => {
       if (!res) return;
-      userExists = (res.cnt > 0);
+      emailExists = (res.rows.cnt > 0);
       console.log(emailExists);
     }, err => {
       console.log(err);
       return;
     });
+    console.log(userExists, emailExists);
 
     if (userExists || emailExists) {
       // successful login if passwords match for input username

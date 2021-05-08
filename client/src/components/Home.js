@@ -211,7 +211,7 @@ export default class Home extends React.Component {
     const contents = (
       <Card>
         <Card.Body>
-          <Card.Title>Top songs in 2020 by 2019's top pop artists</Card.Title>
+          <Card.Title>Top songs in 2020 by 2019's top artists</Card.Title>
           <Card.Subtitle>bc clearly they've still got it</Card.Subtitle>
           {resultsDiv}
         </Card.Body>
@@ -234,7 +234,7 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.rows.map((resObj, i) =>
         <ArtistRow
           name = {resObj.name}
         />

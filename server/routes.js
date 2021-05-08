@@ -17,11 +17,11 @@ const getExample = (req, res) => {
 //saddest songs (lowest energy) of 2020
 const getSaddest2020 = (req, res) => {
   const query = `
-    SELECT s.track_id AS id, s.name AS name, s.artist AS artist
+  SELECT DISTINCT s.track_id AS id, s.name AS name, s.artist AS artist
 	FROM Songs s
 	WHERE s.musical_mode = 0 AND s.duration_ms >= 120000 AND EXTRACT(YEAR FROM s.release_date) = 2020
 	ORDER BY s.danceability ASC, s.energy ASC, s.loudness ASC
-	FETCH NEXT 10 ROWS ONLY
+	FETCH NEXT 5 ROWS ONLY
   `;
 
   connection.query(query, (rows) => {
@@ -34,7 +34,7 @@ const getSaddest2020 = (req, res) => {
 const getSong = (req, res) => {
   const songId = req.params.id;
   const query = `
-  SELECT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
+  SELECT DISTINCT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
   WHERE s.track_id = '${songId}'
   `;
@@ -49,7 +49,7 @@ const getSong = (req, res) => {
 const getArtist = (req, res) => {
   const artistId = req.params.id;
   const query = `
-  SELECT a.name AS name, a.artist_id AS id
+  SELECT DISTINCT a.name AS name, a.artist_id AS id
   FROM Artists a
   WHERE a.artist_id ='${artistId}'
   `;
@@ -64,9 +64,9 @@ const getArtist = (req, res) => {
 const searchSongs = (req, res) => {
   const songName = req.params.name;
   const query = `
-  SELECT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
+  SELECT DISTINCT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
-  WHERE s.name LIKE '${songName}'
+  WHERE LOWER(s.name) LIKE LOWER('%${songName}%')
   ORDER BY s.popularity DESC
   FETCH FIRST 20 ROWS ONLY
   `;
@@ -81,9 +81,9 @@ const searchSongs = (req, res) => {
 const searchArtists = (req, res) => {
   const artistName = req.params.name;
   const query = `
-  SELECT a.name AS name, a.artist_id AS id
+  SELECT DISTINCT a.name AS name, a.artist_id AS id
   FROM artists a
-  WHERE a.name LIKE '%${artistName}%'
+  WHERE LOWER(a.name) LIKE LOWER('%${artistName}%')
   ORDER BY a.popularity DESC
   FETCH FIRST 20 ROWS ONLY
   `;
@@ -156,8 +156,8 @@ const getRecommendedArtists = (req, res) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};
-
+};*/
+/*
 // get songs most like I Got a Feeling by Black Eyed Peas
 const getIGotAFeeling = (req, res) => {
   const query = `
@@ -181,28 +181,29 @@ const getIGotAFeeling = (req, res) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};
+};*/
 
-// get the most popular songs by the most popular hiphop artist of 2018
+// get the most popular songs by the most popular hiphop artist of 2018: EDITED
 const getHipHop2018 = (req, res) => {
   const query = `
   WITH top_hiphop AS (
-    SELECT a.name AS name
+    SELECT DISTINCT a.name AS name, a.popularity as popularity
     FROM artists a 
     JOIN songs s
-    ON s.artist_name = a.name
-    WHERE s.genre LIKE “%hip hop%”
-    GROUP BY a.name
+    ON s.artist = a.name
+    WHERE a.genre LIKE '%hip hop%'
+      GROUP BY a.name, a.popularity
     ORDER BY a.popularity DESC
-    LIMIT 1
+    FETCH FIRST 1 ROWS ONLY
   )
-  SELECT a.name AS artst_name, s.id AS id, s.name AS name, s.year AS year
+  SELECT DISTINCT s.name as name, s.track_id AS id, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year
   FROM songs s
   JOIN artists a
-  ON s.artist_name = a.name
-  WHERE s.artist IN top_hiphop.name
+  ON s.artist = a.name
+  WHERE s.artist IN 
+  (SELECT name FROM top_hiphop)
   ORDER BY s.popularity DESC
-  LIMIT 5;
+  FETCH FIRST 5 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -211,6 +212,7 @@ const getHipHop2018 = (req, res) => {
   });
 };
 
+/*
 // get the top metal songs of 2005
 const getMetal2005 = (req, res) => {
   const query = `
@@ -224,30 +226,28 @@ const getMetal2005 = (req, res) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};
+};*/
 
-// get the most popular songs of 2020 by the most popular artists of 2019
+// get the most popular songs of 2020 by the most popular artists of 2019: EDITED
 const getSongsPopular2020 = (req, res) => {
   const query = `
   WITH avg_popularity_2019 AS(
     SELECT a.name 
-    FROM artists a
-    JOIN songs s
-    ON s.artist_name = a.name
-    Where s.year = 2019
+    FROM ARTISTS a
+    JOIN SONGS s
+    ON s.artist = a.name
+    Where EXTRACT(year FROM s.release_date) = 2019
     GROUP BY a.name
     ORDER BY AVG(s.popularity) DESC
-    LIMIT 3
+    FETCH NEXT 3 ROWS ONLY
   )
-  SELECT s.id as id, s.name AS name, s.artist AS artist, s.year AS year
-  FROM songs s
-  JOIN artists a
-  ON s.artist_name = a.name
-  WHERE (s.year = 2020 
-  AND a.name 
-  IN avg_popularity_2019)
+  SELECT DISTINCT s.name as name, s.track_id AS id, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year
+  FROM SONGS s
+  JOIN avg_popularity_2019 ap
+  ON s.artist = ap.name
+  WHERE EXTRACT(year FROM s.release_date) = 2020
   ORDER BY s.popularity DESC
-  LIMIT 3;
+  FETCH NEXT 5 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -256,18 +256,18 @@ const getSongsPopular2020 = (req, res) => {
   });
 };
 
-// get the artists who released the most songs in 2019
+// get the artists who released the most songs in 2019: EDITED
 const getArtistsFrequent2019 = (req, res) => {
   const query = `
-  SELECT artist.name AS name
-  FROM songs s
-  JOIN artists a
-  ON s.artist_name = a.name
-  WHERE s.year = 2019
+  SELECT DISTINCT a.name AS name
+  FROM SONGS s
+  JOIN ARTISTS a
+  ON s.artist = a.name
+  WHERE EXTRACT(year FROM s.release_date) = 2019
   GROUP BY a.name
-  ORDER BY COUNT(s.id) DESC
-  LIMIT 5;
-  `;
+  ORDER BY COUNT(s.name) DESC
+  FETCH NEXT 5 ROWS ONLY
+`;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -275,31 +275,34 @@ const getArtistsFrequent2019 = (req, res) => {
   });
 };
 
-// get the most active artists in pop (number of songs / years active) 
+// get the most active artists in pop (number of songs / years active): EDITED
 const getArtistsActivePop = (req, res) => {
   const query = `
   WITH years_active AS (
-    SELECT artist AS name, MAX(year) - MIN(year) AS num_years
-    FROM songss
+    SELECT artist AS name, 
+          MAX(EXTRACT(year FROM s.release_date)) - MIN(EXTRACT(year FROM s.release_date)) 
+          AS num_years
+    FROM SONGS s
     GROUP BY artist
   ), num_songs AS (
     SELECT a.name AS name, COUNT(s.name) AS num_songs
-    FROM artists a
-    JOIN songs s
-    ON a.name = s.artist_name
+    FROM ARTISTS a
+    JOIN SONGS s
+    ON a.name = s.artist
   GROUP BY a.name 
   ), artist_activity AS (
   SELECT a.name AS name, n.num_songs / y.num_years AS activity
-  FROM artists a
+  FROM ARTISTS a
   JOIN years_active y
   ON a.name = y.name 
   JOIN num_songs n
   ON a.name = n.name
+  WHERE y.num_years > 0
   )
-  SELECT a.name
+  SELECT DISTINCT a.name
   FROM artist_activity a
   ORDER BY a.activity DESC
-  LIMIT 10;
+  FETCH NEXT 5 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -308,6 +311,7 @@ const getArtistsActivePop = (req, res) => {
   });
 };
 
+/*
 // get most relevant artists
 const getArtistsRelevance = (req, res) => {
   const query = `
@@ -446,13 +450,12 @@ module.exports = {
   searchArtists: searchArtists,
   //getIGotAFeeling: getIGotAFeeling,
   getSaddest2020: getSaddest2020,
-  /*
   getHipHop2018: getHipHop2018,
-  getMetal2005: getMetal2005,
+  //getMetal2005: getMetal2005,
   getSongsPopular2020: getSongsPopular2020,
   getArtistsFrequent2019: getArtistsFrequent2019,
   getArtistsActivePop: getArtistsActivePop,
-  getArtistsRelevance: getArtistsRelevance, */
+  //getArtistsRelevance: getArtistsRelevance,
   getPassword: getPassword,
   getFriends: getFriends, 
   getUser: getUser,
