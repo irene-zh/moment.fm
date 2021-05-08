@@ -358,15 +358,15 @@ const getArtistsRelevance = (req, res) => {
   });
 };
 
-// get password for input username and email
+// get password for input username and email: EDITED
 const getPassword = (req, res) => {
   const username = req.params.username;
   const email = req.params.email;
   const query = `
   SELECT u.password
   FROM users u
-  WHERE u.username = ${username}
-  AND u.email = ${email}
+  WHERE u.username = '${username}'
+  AND u.email = '${email}'
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -375,20 +375,21 @@ const getPassword = (req, res) => {
   });
 };
 
-// get friend's usernames
+// get friend's usernames: EDITED
 const getFriends = (req, res) => {
   const username = req.params.username;
   const query = `
   WITH user_email AS (
     SELECT u.email
     FROM users u
-    WHERE u.username = ${username}
+    WHERE u.username = '${username}'
   )
-  SELECT u.username AS friend
+  SELECT DISTINCT u.username AS friend
   FROM friends f
   JOIN users u
-  ON f.friend_email = u.email
-  WHERE f.user_email IN user_email
+  ON u.email = f.friend_email
+  WHERE f.user_email = user_email
+  AND u.username <> '${username}'
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -397,12 +398,13 @@ const getFriends = (req, res) => {
   });
 };
 
+// get number of users with this username (checks username validity): EDITED
 const getUser = (req, res) => {
   const username = req.params.username;
   const query = `
   SELECT COUNT(u.username) AS cnt
   FROM users u
-  WHERE u.username = ${username}
+  WHERE u.username = '${username}'
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -411,12 +413,13 @@ const getUser = (req, res) => {
   });
 };
 
+// get number of users with this email (checks email validity): EDITED
 const getEmail = (req, res) => {
   const email = req.params.email;
   const query = `
   SELECT COUNT(u.email) AS cnt
   FROM users u
-  WHERE u.email = ${email}
+  WHERE u.email = '${email}'
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -425,6 +428,7 @@ const getEmail = (req, res) => {
   });
 };
 
+// add new user: EDITED
 const addUser = (req, res) => {
   const username = req.params.username;
   const email = req.params.email;
@@ -432,8 +436,8 @@ const addUser = (req, res) => {
   const name = req.params.name;
 
   const query = `
-  INSERT INTO users(name, username, email, password) 
-  (${name}, ${username}, ${email}, ${password})
+  INSERT INTO users(name, username, email, password) values
+  ('${name}', '${username}', '${email}', '${password}')
   `;
 
   connection.query(query, (err, rows, fields) => {
