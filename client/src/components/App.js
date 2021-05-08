@@ -21,6 +21,7 @@ import NowPlaying from './NowPlaying';
 import SpotifySongRow from './SpotifySongRow';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Profile from './Profile';
+
 const spotifyApi = new SpotifyWebApi();
 
 /* functional component to render page for song */
