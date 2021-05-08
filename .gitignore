@@ -104,3 +104,4 @@ dist
 .tern-port
 
 db-config.js
+db-config.json
