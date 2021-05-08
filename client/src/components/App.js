@@ -461,10 +461,10 @@ export default class App extends React.Component {
                 />
                 </>)}
             />
-            <Route path="/artist/:artistId">
+            <Route path="/artist/:id">
               <ArtistPage />
             </Route>
-            <Route path="/song/:songId">
+            <Route path="/song/:id">
               <SongPage />
             </Route>
             <Route path="/user/:username">

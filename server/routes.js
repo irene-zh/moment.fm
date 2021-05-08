@@ -29,20 +29,10 @@ const getSaddest2020 = (req, res) => {
   });
 };
 
-module.exports = {
-  getExample: getExample,
-  getSaddest2020: getSaddest2020,
-};
 
-
-/* -------------------------------------------------- */
-/* ------------------- Route Handlers --------------- */
-/* -------------------------------------------------- */
-
-/*
 // get song info by id: EDITED
 const getSong = (req, res) => {
-  const songId = req.params.songId;
+  const songId = req.params.id;
   const query = `
   SELECT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
@@ -57,7 +47,7 @@ const getSong = (req, res) => {
 
 // get arist info by id: EDITED
 const getArtist = (req, res) => {
-  const artistId = req.params.artistId;
+  const artistId = req.params.id;
   const query = `
   SELECT a.name AS name, a.artist_id AS id
   FROM Artists a
@@ -72,11 +62,11 @@ const getArtist = (req, res) => {
 
 // search for songs by title: EDITED
 const searchSongs = (req, res) => {
-  const songTitle = req.params.song;
+  const songName = req.params.name;
   const query = `
   SELECT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
-  WHERE s.name LIKE '${songId}'
+  WHERE s.name LIKE '${songName}'
   ORDER BY s.popularity DESC
   FETCH FIRST 20 ROWS ONLY
   `;
@@ -104,6 +94,7 @@ const searchArtists = (req, res) => {
   });
 };
 
+/*
 // get recommended artists for an input artist
 const getRecommendedArtists = (req, res) => {
   const artistName = req.params.name;
@@ -356,7 +347,7 @@ const getArtistsRelevance = (req, res) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};
+};*/
 
 // get password for input username and email: EDITED
 const getPassword = (req, res) => {
@@ -447,23 +438,24 @@ const addUser = (req, res) => {
 
 
 module.exports = {
+  getExample: getExample,
   getSong: getSong,
 	getArtist: getArtist,
-	getRecommendedArtists: getRecommendedArtists,
+	//getRecommendedArtists: getRecommendedArtists,
   searchSongs: searchSongs,
   searchArtists: searchArtists,
-  getIGotAFeeling: getIGotAFeeling,
+  //getIGotAFeeling: getIGotAFeeling,
   getSaddest2020: getSaddest2020,
+  /*
   getHipHop2018: getHipHop2018,
   getMetal2005: getMetal2005,
   getSongsPopular2020: getSongsPopular2020,
   getArtistsFrequent2019: getArtistsFrequent2019,
   getArtistsActivePop: getArtistsActivePop,
-  getArtistsRelevance: getArtistsRelevance, 
+  getArtistsRelevance: getArtistsRelevance, */
   getPassword: getPassword,
   getFriends: getFriends, 
   getUser: getUser,
   getEmail: getEmail, 
   addUser: addUser
 };
-*/
