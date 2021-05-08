@@ -40,13 +40,13 @@ module.exports = {
 /* -------------------------------------------------- */
 
 /*
-// get song info by id
+// get song info by id: EDITED
 const getSong = (req, res) => {
   const songId = req.params.songId;
   const query = `
-  SELECT s.name, s.artist, s.id, s.album, s.year
+  SELECT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
-  WHERE s.id = ${songId};
+  WHERE s.track_id = '${songId}'
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -55,13 +55,13 @@ const getSong = (req, res) => {
   });
 };
 
-// get arist info by id
+// get arist info by id: EDITED
 const getArtist = (req, res) => {
   const artistId = req.params.artistId;
   const query = `
-  SELECT a.name, a.id 
-  FROM artists a
-  WHERE a.id = ${artistId};
+  SELECT a.name AS name, a.artist_id AS id
+  FROM Artists a
+  WHERE a.artist_id ='${artistId}'
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -70,15 +70,15 @@ const getArtist = (req, res) => {
   });
 };
 
-// search for songs by title
+// search for songs by title: EDITED
 const searchSongs = (req, res) => {
   const songTitle = req.params.song;
   const query = `
-  SELECT s.name, s.artist, s.id, s.album, s.year
+  SELECT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
-  WHERE s.title LIKE "%${songTitle}%";
+  WHERE s.name LIKE '${songId}'
   ORDER BY s.popularity DESC
-  LIMIT 20;
+  FETCH FIRST 20 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -87,15 +87,15 @@ const searchSongs = (req, res) => {
   });
 };
 
-// search for artists by name
+// search for artists by name: EDITED
 const searchArtists = (req, res) => {
   const artistName = req.params.name;
   const query = `
-  SELECT a.name, a.id
-  FROM artist a
-  WHERE a.name LIKE "%${artistName}%";
-  ORDER BY s.popularity DESC
-  LIMIT 20;
+  SELECT a.name AS name, a.artist_id AS id
+  FROM artists a
+  WHERE a.name LIKE '%${artistName}%'
+  ORDER BY a.popularity DESC
+  FETCH FIRST 20 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -184,25 +184,6 @@ const getIGotAFeeling = (req, res) => {
   AND ABS(s.loudness - got_a_feeling.loudness) < .05
   AND s.name <> "I got a Feeling"
   LIMIT 5;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get the saddest songs of 2020 
-const getSaddest2020 = (req, res) => {
-  const query = `
-  SELECT s.id AS id, s.name AS name, s.artist AS artist, s.year AS year
-  FROM songs s
-  WHERE s.mode = 0
-  ORDER BY 
-  s.danceability ASC,
-  s.energy ASC,
-  s.loudness ASC
-  LIMIT 10;
   `;
 
   connection.query(query, (err, rows, fields) => {
