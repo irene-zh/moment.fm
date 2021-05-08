@@ -267,6 +267,10 @@ export default class App extends React.Component {
   getNowPlaying(){
     spotifyApi.getMyCurrentPlaybackState()
       .then((response) => {
+        response.json();
+      }, err => {
+        console.log(err);
+      }).then(response => {
         this.setState({
           nowPlaying: { 
             name: response.item.name, 
@@ -351,6 +355,7 @@ export default class App extends React.Component {
       console.log(emailExists);
     }, err => {
       console.log(err);
+      return;
     });
 
     if (userExists || emailExists) {
