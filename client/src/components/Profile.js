@@ -1,79 +1,89 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
-import PageNavbar from './PageNavbar';
-import NowPlaying from './NowPlaying';
-import Button from 'react-bootstrap/Button';
-import SpotifyWebApi from 'spotify-web-api-js';
-const spotifyApi = new SpotifyWebApi();
+import {
+  Container,
+  Row,
+  Button,
+  Card,
+  Accordion
+} from 'react-bootstrap';
 
 export default class Profile extends React.Component {
 	constructor(props) {
 		super(props);
     
-    /*const params = getHashParams();
-    const token = params.access_token;
-    if (token) {
-      spotifyApi.setAccessToken(token);
-    }
     this.state = {
-      profileDiv: [],
-      loggedIn: token ? true : false,
-      nowPlaying: {
-        name: '', 
-        artist: '',
-        album: '', 
-        albumArt: ''}
-    }*/
+      profileDiv: []
+    }
 	};
 
 	componentDidMount() {
-    // TODO FIX THIS :(( make button go away if already logged in
-    if (!this.state.loggedIn) {
-      this.setState({
-      profileDiv: 
+    var profileDiv;
+    console.log(this.props.loggedIn);
+    if (!this.props.loggedIn) {
+      profileDiv = (
+        <>
         <Container>
-          <a href="http://localhost:8888">
-            <Button>
-              Login to Spotify!
-            </Button>
-          </a>
-        </Container>});
-      console.log("set login prompt button");
+          <h1>Oops!</h1>
+          <p>Looks like you aren't logged in. Head over to <a href="Login">here</a> to get started.</p>
+        </Container>
+        </>
+      );
+    } else {
+      const userDiv = (
+        <Container>
+          <Row>
+          <h3>{this.props.username}</h3>
+          </Row>
+        </Container>
+      );
+      var friendsDiv, friendsList;
+
+      fetch("http://localhost:8081/user/:" + this.props.username + "/friends",
+      {
+        method: 'GET' // The type of HTTP request.
+      }).then(res => {
+        return res.json();
+      }, err => {
+        console.log(err);
+      }).then(userInfo => {
+        if (!userInfo) return;
+
+        friendsList = userInfo.map((friend, i) =>
+          <Card.Body><a href={"/user/" + friend}>{friend}</a></Card.Body>
+        );
+
+        friendsDiv = 
+          <Container>
+            <Accordion defaultActiveKey="0">
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                    {userInfo.friend.length} Friends
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                  {friendsList}
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
+          </Container>;
+
+        profileDiv = (
+          <>
+          {userDiv}
+          {friendsDiv}
+          </>
+        );
+      }, err => {
+        console.log(err);
+      });
     }
+
+    this.setState({
+      profileDiv: profileDiv});
 	};
 
-  setNowPlaying() {
-    const params = this.getHashParams();
-    const token = params.access_token;
-    if (token) {
-      spotifyApi.setAccessToken(token);
-    }
-    var loggedIn = token ? true : false;
-
-    if (loggedIn) {
-      this.getNowPlaying();
-      console.log(this.state);
-      this.setState({
-      profileDiv: 
-        <Container>
-          <NowPlaying
-            name={this.state.name}
-            artist={this.state.artist}
-            album={this.state.album}
-            albumArt={this.state.albumArt}
-          /> 
-        </Container>,
-      loggedIn: true});
-    }
-  }
-
 	render() {
-    this.setNowPlaying();
-    return (
-      <>
-      <PageNavbar activeKey="profile" />
-      {this.state.profileDiv}
-      </>
-    );
+    return this.state.profileDiv;
 	};
 };

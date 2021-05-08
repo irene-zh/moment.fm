@@ -79,7 +79,7 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
           id = {resObj.id}
           title={resObj.name}

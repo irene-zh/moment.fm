@@ -20,6 +20,7 @@ import RelatedArtists from './RelatedArtists';
 import NowPlaying from './NowPlaying';
 import SpotifySongRow from './SpotifySongRow';
 import SpotifyWebApi from 'spotify-web-api-js';
+import Profile from './Profile';
 const spotifyApi = new SpotifyWebApi();
 
 /* functional component to render page for song */
@@ -249,8 +250,6 @@ export default class App extends React.Component {
     this.getHashParams = this.getHashParams.bind(this);
     this.getNowPlaying = this.getNowPlaying.bind(this);
     this.getRecentTracks = this.getRecentTracks.bind(this);
-    this.checkExistingUser = this.checkExistingUser.bind(this);
-    this.createNewUser = this.createNewUser.bind(this);
   }
 
   getHashParams() {
@@ -303,14 +302,6 @@ export default class App extends React.Component {
       }, err => {
         console.log(err);
       });
-  }
-
-  checkExistingUser(username, email, password) {
-
-  }
-
-  createNewUser(username, email, password) {
-
   }
 
   submitLoginForm(event) {
@@ -414,7 +405,7 @@ export default class App extends React.Component {
                   <h1>Welcome to moment.fm!</h1>
                   <p>a kewl way to find music recs ahaha xd be in the ~ moment ~</p>
                   <p>Check out the <a href="/Explore">Explore</a> page to start searching for your favorite artists and songs, 
-                      or head on over to the <a href="/Profile">Profile</a> page to connect your Spotify and unlock more hidden gems!
+                      or head on over to the <a href="/Login">Login</a> page to make an account!
                   </p>
                   <p>In the meantime, we've got some fun recommendations and statistics for you below.</p>
                 </Container>
@@ -443,13 +434,24 @@ export default class App extends React.Component {
 							exact path="/Explore"
 							render={() => <Explore />}
 						/>
-						<Route exact path="/Login">
+						<Route exact path="/Login"
+              render={() =>
               <Login 
                 loggedIn={this.state.loggedIn} 
                 submitLoginForm={this.submitLoginForm.bind(this)} 
                 username={this.state.username}
-              />
-            </Route>
+              />}
+            />
+            <Route exact path="/Profile"
+              render={() => (
+                <>
+                <PageNavbar />
+                <Profile 
+                  loggedIn={this.state.loggedIn} 
+                  username={this.state.username} 
+                />
+                </>)}
+            />
             <Route path="/artist/:artistId">
               <ArtistPage />
             </Route>

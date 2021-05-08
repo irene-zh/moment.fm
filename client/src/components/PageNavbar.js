@@ -12,7 +12,7 @@ export default class PageNavbar extends React.Component {
 	};
 
 	componentDidMount() {
-		const pageList = ['Explore', 'Profile'];
+		const pageList = ['Explore', 'Profile', 'Login'];
 
 		let navbarDivs = pageList.map((page, i) => {
 			return <Nav.Item key={i}><Nav.Link href={"/" + page}>{page.charAt(0).toUpperCase() + page.substring(1, page.length)}</Nav.Link></Nav.Item> 
