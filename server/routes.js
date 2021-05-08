@@ -29,9 +29,175 @@ const getSaddest2020 = (req, res) => {
   });
 };
 
+//get the 3 most popular songs from 2020 by the 3 most popular artists in 2019 
+const getSongsPopular2020 = (req, res) => {
+  const query = `
+	WITH avg_popularity_2019 AS(
+		SELECT a.name 
+		FROM ARTISTS a
+		JOIN SONGS s
+		ON s.artist = a.name
+		Where EXTRACT(year FROM s.release_date) = 2019
+		GROUP BY a.name
+		ORDER BY AVG(s.popularity) DESC
+		OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY
+	)
+	SELECT s.name as name
+	FROM SONGS s
+	JOIN avg_popularity_2019 ap
+	ON s.artist = ap.name
+	WHERE EXTRACT(year FROM s.release_date) = 2020
+	ORDER BY s.popularity DESC
+	OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+}
+
+// get the artists who released the most songs in 2019
+const getArtistsFrequent2019 = (req, res) => {
+  const query = `
+    SELECT a.name AS name
+	FROM SONGS s
+	JOIN ARTISTS a
+	ON s.artist = a.name
+	WHERE EXTRACT(year FROM s.release_date) = 2019
+	GROUP BY a.name
+	ORDER BY COUNT(s.name) DESC
+	OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
+// get the top metal songs of 2005
+const getMetal2005 = (req, res) => {
+  const query = `
+    SELECT s.name as name, s.artist as artist
+	FROM Songs s
+	WHERE EXTRACT(YEAR FROM s.release_date) = 2005
+	ORDER BY s.liveness DESC
+	FETCH FIRST 10 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
+// get the most popular songs by the most popular hiphop artist of 2018
+const getHipHop2018 = (req, res) => {
+  const query = `
+    WITH top_hiphop AS (
+    SELECT DISTINCT a.name AS name, a.popularity as popularity
+    FROM artists a 
+    JOIN songs s
+    ON s.artist = a.name
+    WHERE a.genre LIKE '%hip hop%'
+      GROUP BY a.name, a.popularity
+    ORDER BY a.popularity DESC
+    FETCH FIRST 1 ROWS ONLY
+  )
+  SELECT DISTINCT s.name as name, s.track_id AS id, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year
+  FROM songs s
+  JOIN artists a
+  ON s.artist = a.name
+  WHERE s.artist IN 
+  (SELECT name FROM top_hiphop)
+  ORDER BY s.popularity DESC
+  FETCH FIRST 5 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
+// get songs most like I Got a Feeling by Black Eyed Peas
+const getIGotAFeeling = (req, res) => {
+  const query = `
+  WITH got_a_feeling AS (
+    SELECT s.energy, s.danceability, s.tempo, s.loudness
+    FROM songs s
+    WHERE LOWER(s.name) = LOWER('I gotta Feeling') AND s.artist = 'Black Eyed Peas'
+      FETCH NEXT 1 ROWS ONLY
+  )
+  SELECT s.track_id AS id, s.name AS name, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year, s.popularity
+  FROM songs s, got_a_feeling g
+  WHERE 
+    ABS(s.tempo - g.tempo) < 10 AND
+    ABS(s.danceability - g.danceability) < .1 AND
+    ABS(s.energy - g.energy) < .1
+  ORDER BY s.popularity
+  FETCH NEXT 5 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
+// get the most active artists in pop (number of songs / years active) 
+const getArtistsActivePop = (req, res) => {
+  const query = `
+    WITH years_active AS (
+    SELECT artist AS name, 
+          MAX(EXTRACT(year FROM s.release_date)) - MIN(EXTRACT(year FROM s.release_date)) 
+          AS num_years
+    FROM SONGS s
+    GROUP BY artist
+  ), num_songs AS (
+    SELECT a.name AS name, COUNT(s.name) AS num_songs
+    FROM ARTISTS a
+    JOIN SONGS s
+    ON a.name = s.artist
+  GROUP BY a.name 
+  ), artist_activity AS (
+  SELECT a.name AS name, n.num_songs / y.num_years AS activity
+  FROM ARTISTS a
+  JOIN years_active y
+  ON a.name = y.name 
+  JOIN num_songs n
+  ON a.name = n.name
+  WHERE y.num_years > 0
+  )
+  SELECT DISTINCT a.name
+  FROM artist_activity a
+  ORDER BY a.activity DESC
+  FETCH NEXT 5 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
+// get most relevant artists
+// TODO...
+const getArtistsRelevance = (req, res) => {
+  const query = `
+    
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
 module.exports = {
   getExample: getExample,
   getSaddest2020: getSaddest2020,
+  getSongsPopular2020: getSongsPopular2020,
+  getArtistsFrequent2019: getArtistsFrequent2019,
+  getMetal2005: getMetal2005,
+  getHipHop2018: getHipHop2018,
+  getIGotAFeeling: getIGotAFeeling,
+  getArtistsActivePop: getArtistsActivePop,
+  getArtistsRelevance: getArtistsRelevance
 };
 
 
@@ -167,93 +333,6 @@ const getRecommendedArtists = (req, res) => {
   });
 };
 
-// get songs most like I Got a Feeling by Black Eyed Peas
-const getIGotAFeeling = (req, res) => {
-  const query = `
-  WITH got_a_feeling AS (
-    SELECT s.acousticness, s.danceability, s.liveness, s.loudness
-    FROM songs s
-    WHERE s.name = "I got a Feeling" 
-    AND s.artist_name = "Black Eyed Peas"
-  )
-  SELECT s.id AS id, s.name AS name, s.artist AS artist, s.year AS year
-  FROM songs s, got_a_feeling
-  WHERE ABS(s.acousticness - got_a_feeling.acousticness) < .05
-  AND ABS(s.danceability - got_a_feeling.danceability) < .05
-  AND ABS(s.liveness - got_a_feeling.liveness) < .05
-  AND ABS(s.loudness - got_a_feeling.loudness) < .05
-  AND s.name <> "I got a Feeling"
-  LIMIT 5;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get the saddest songs of 2020 
-const getSaddest2020 = (req, res) => {
-  const query = `
-  SELECT s.id AS id, s.name AS name, s.artist AS artist, s.year AS year
-  FROM songs s
-  WHERE s.mode = 0
-  ORDER BY 
-  s.danceability ASC,
-  s.energy ASC,
-  s.loudness ASC
-  LIMIT 10;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get the most popular songs by the most popular hiphop artist of 2018
-const getHipHop2018 = (req, res) => {
-  const query = `
-  WITH top_hiphop AS (
-    SELECT a.name AS name
-    FROM artists a 
-    JOIN songs s
-    ON s.artist_name = a.name
-    WHERE s.genre LIKE “%hip hop%”
-    GROUP BY a.name
-    ORDER BY a.popularity DESC
-    LIMIT 1
-  )
-  SELECT a.name AS artst_name, s.id AS id, s.name AS name, s.year AS year
-  FROM songs s
-  JOIN artists a
-  ON s.artist_name = a.name
-  WHERE s.artist IN top_hiphop.name
-  ORDER BY s.popularity DESC
-  LIMIT 5;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get the top metal songs of 2005
-const getMetal2005 = (req, res) => {
-  const query = `
-  SELECT s.id as id, s.name AS name, s.artist AS artist, s.year AS year
-  FROM songs s
-  ORDER BY s.liveness DESC
-  LIMIT 10;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
 // get the most popular songs of 2020 by the most popular artists of 2019
 const getSongsPopular2020 = (req, res) => {
   const query = `
@@ -276,99 +355,6 @@ const getSongsPopular2020 = (req, res) => {
   IN avg_popularity_2019)
   ORDER BY s.popularity DESC
   LIMIT 3;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get the artists who released the most songs in 2019
-const getArtistsFrequent2019 = (req, res) => {
-  const query = `
-  SELECT artist.name AS name
-  FROM songs s
-  JOIN artists a
-  ON s.artist_name = a.name
-  WHERE s.year = 2019
-  GROUP BY a.name
-  ORDER BY COUNT(s.id) DESC
-  LIMIT 5;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get the most active artists in pop (number of songs / years active) 
-const getArtistsActivePop = (req, res) => {
-  const query = `
-  WITH years_active AS (
-    SELECT artist AS name, MAX(year) - MIN(year) AS num_years
-    FROM songss
-    GROUP BY artist
-  ), num_songs AS (
-    SELECT a.name AS name, COUNT(s.name) AS num_songs
-    FROM artists a
-    JOIN songs s
-    ON a.name = s.artist_name
-  GROUP BY a.name 
-  ), artist_activity AS (
-  SELECT a.name AS name, n.num_songs / y.num_years AS activity
-  FROM artists a
-  JOIN years_active y
-  ON a.name = y.name 
-  JOIN num_songs n
-  ON a.name = n.name
-  )
-  SELECT a.name
-  FROM artist_activity a
-  ORDER BY a.activity DESC
-  LIMIT 10;
-  `;
-
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
-  });
-};
-
-// get most relevant artists
-const getArtistsRelevance = (req, res) => {
-  const query = `
-  WITH top_artists AS(
-    SELECT artist_name
-    FROM artists 
-    ORDER BY popularity
-    LIMIT 100
-  ),
-  most_pop_1 AS(
-    SELECT artist, popularity
-    FROM songs s 
-    ORDER BY s.popularity DESC
-    WHERE year > 1999 AND year < 2005 
-  ),
-  Num_hits_1 AS (
-    SELECT artist, COUNT(*) as num_hits
-    FROM most_pop_1
-    GROUP BY artist
-  ),
-  most_pop_2 AS(
-  SELECT artist
-    FROM songs s
-    ORDER BY s.popularity DESC
-    WHERE year > 2004 AND year < 2005 
-  ),
-  Num_hits_2 AS (
-    SELECT artist, COUNT(*) as num_hits
-    FROM most_pop_2
-    GROUP BY artist
-  )
-  SELECT a.artist, (num_hits_1*num_hits_2)
-  FROM num_hits_1 a JOIN num_hits_2 b ON a.artist = b.artist; 
   `;
 
   connection.query(query, (err, rows, fields) => {
