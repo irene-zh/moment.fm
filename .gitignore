@@ -103,5 +103,4 @@ dist
 # TernJS port file
 .tern-port
 
-db-config.js
-db-config.json
+server/connectionCredentials.json
