@@ -17,7 +17,7 @@ const getExample = (req, res) => {
 //saddest songs (lowest energy) of 2020
 const getSaddest2020 = (req, res) => {
   const query = `
-    SELECT s.track_id AS id, s.name AS name, s.artist AS artist
+    SELECT s.track_id AS id, s.name AS name, s.artist AS artist, EXTRACT(YEAR FROM s.release_date)
 	FROM Songs s
 	WHERE s.musical_mode = 0 AND s.duration_ms >= 120000 AND EXTRACT(YEAR FROM s.release_date) = 2020
 	ORDER BY s.danceability ASC, s.energy ASC, s.loudness ASC
