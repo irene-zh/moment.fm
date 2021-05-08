@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "oracledb": "^5.1.0",
     "spotify-web-api-js": "^1.5.1"
   }
 }

@@ -39,7 +39,7 @@ export default class Profile extends React.Component {
       );
       var friendsDiv, friendsList;
 
-      fetch("http://localhost:8081/user/:" + this.props.username + "/friends",
+      fetch("http://localhost:8081/user/" + this.props.username + "/friends",
       {
         method: 'GET' // The type of HTTP request.
       }).then(res => {
