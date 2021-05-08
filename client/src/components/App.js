@@ -175,7 +175,9 @@ function Login(props) {
       <>
       <PageNavbar />
       <Container>
-      Welcome {props.username}!
+      <h1>&#x1F511;</h1>
+      <h1>Login</h1>
+      <p>Welcome {props.username}!</p>
       </Container>
       </>
     );
@@ -184,6 +186,8 @@ function Login(props) {
       <>
       <PageNavbar />
       <Container>
+      <h1>&#x1F511;</h1>
+      <h1>Login</h1>
       <Form onSubmit={(e) => props.submitLoginForm(e)}>
         <Form.Group>
           <Form.Label>Name</Form.Label>

@@ -23,6 +23,7 @@ export default class Profile extends React.Component {
       profileDiv = (
         <>
         <Container>
+          <h1>&#x1F640;</h1>
           <h1>Oops!</h1>
           <p>Looks like you aren't logged in. Head over to <a href="Login">here</a> to get started.</p>
         </Container>
@@ -32,7 +33,8 @@ export default class Profile extends React.Component {
       const userDiv = (
         <Container>
           <Row>
-          <h3>{this.props.username}</h3>
+          <h1>&#x1F64B;</h1>
+          <h1>{this.props.username}</h1>
           </Row>
         </Container>
       );

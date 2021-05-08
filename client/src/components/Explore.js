@@ -104,6 +104,8 @@ export default class Explore extends React.Component {
 			<>
 				<PageNavbar active="explore" />
         <Container>
+          <h1>&#x1F440;</h1>
+          <h1>Explore</h1>
           <Row>
             <Col sm={8}><input type="text" style={{width:"90%"}} placeholder="search for an artist or song!" value={this.state.searchItem} onChange={this.handleInputChange} /></Col>
             <Col sm={2}><Button onClick={this.submitArtist}>Search Artists</Button></Col>
