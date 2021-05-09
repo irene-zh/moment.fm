@@ -314,12 +314,9 @@ export default class App extends React.Component {
   }
 
   getNowPlaying(){
+    console.log("checking now playing");
     spotifyApi.getMyCurrentPlaybackState()
       .then((response) => {
-        response.json();
-      }, err => {
-        console.log(err);
-      }).then(response => {
         this.setState({
           nowPlaying: { 
             name: response.item.name, 
@@ -336,13 +333,9 @@ export default class App extends React.Component {
   getRecentTracks() {
     spotifyApi.getMyRecentlyPlayedTracks()
       .then((response) => {
-        response.json();
-      }, err => {
-        console.log(err);
-      }).then(recentTracks => {
-        if (!recentTracks) return;
+        if (!response) return;
 
-        const tracksDiv = recentTracks.map((song, i) => {
+        const tracksDiv = response.map((song, i) => {
           <SpotifySongRow 
             name={song.item[i].name}
             artist={song.item[i].artist[0].name}
