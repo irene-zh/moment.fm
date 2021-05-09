@@ -17,6 +17,7 @@ import Home from './Home';
 import Explore from './Explore';
 import PageNavbar from './PageNavbar';
 import ArtistRow from './ArtistRow';
+import SongRow from './SongRow';
 import NowPlaying from './NowPlaying';
 import SpotifySongRow from './SpotifySongRow';
 import SpotifyWebApi from 'spotify-web-api-js';
@@ -66,6 +67,7 @@ function ArtistPage() {
   let { id } = useParams();
   const [header, setHeader] = useState([]);
   const [related, setRelated] = useState([]);
+  const [topSongs, setTopSongs] = useState([]);
 
   useEffect(() => {
     // get artist name
@@ -87,7 +89,7 @@ function ArtistPage() {
       console.log(err);
     });
   
-    // fetch related artists
+    // get related artists
     fetch("http://localhost:8081/related/artists/" + id,
     {
       method: 'GET'
@@ -110,6 +112,31 @@ function ArtistPage() {
     }, err => {
       console.log(err);
     });
+
+    // get top songs
+    fetch("http://localhost:8081/artist/" + id + "/topSongs",
+    {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(songsInfo => {
+      if (!songsInfo) return;
+      console.log(songsInfo);
+  
+      const topSongsDiv = songsInfo.rows.map((song, i) =>
+        <SongRow
+        id={song[2]}
+        name={song[0]}
+        artist={song[1]}
+        year={song[3]}
+        />
+      );
+      setTopSongs(topSongsDiv);
+    }, err => {
+      console.log(err);
+    });
   }, []);
 
   return (
@@ -117,6 +144,8 @@ function ArtistPage() {
   <PageNavbar />
   <Container>
   {header}
+  <p>Top releases:</p>
+  {topSongs}
   <p>Artists you might like too:</p>
   {related}
   </Container>

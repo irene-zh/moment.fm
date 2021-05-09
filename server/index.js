@@ -21,6 +21,8 @@ app.get('/artist/:id', routes.getArtist);
 
 app.get('/song/:id', routes.getSong);
 
+app.get('/artist/:id/topSongs', routes.getTopSongsByArtist);
+
 app.get('/explore/songs/:name', routes.searchSongs);
 
 app.get('/explore/artists/:name', routes.searchArtists);
