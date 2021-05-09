@@ -29,31 +29,29 @@ function SongPage() {
   let { id } = useParams();
   const [songInfo, setSongInfo] = useState([]);
 
-  // Send an HTTP request to the server.
-  fetch("http://localhost:8081/song/" + id,
-  {
-    method: 'GET' // The type of HTTP request.
-  }).then(res => {
-    // Convert the response data to a JSON.
-    return res.json();
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  }).then(songInfo => {
-    if (!songInfo) return;
+  useEffect(() => {
+    fetch("http://localhost:8081/song/" + id,
+    {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(songInfo => {
+      if (!songInfo) return;
 
-    // name, artist, year
-    const songDiv = 
-      <Container>
-        <h1>{songInfo.rows[0][0]}</h1>
-        <p>By <a href={"/artist/" + songInfo.rows[0][2]}>{songInfo.rows[0][1]}</a></p>
-        <p>Released in {songInfo.rows[0][4]}</p>
-      </Container>;
-    setSongInfo(songDiv);
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  });
+      // name, artist, year
+      const songDiv = 
+        <Container>
+          <h1>{songInfo.rows[0][0]}</h1>
+          <p>By <a href={"/artist/" + songInfo.rows[0][2]}>{songInfo.rows[0][1]}</a></p>
+          <p>Released in {songInfo.rows[0][4]}</p>
+        </Container>;
+      setSongInfo(songDiv);
+    }, err => {
+      console.log(err);
+    });
+  }, []);
 
   return (
   <>
@@ -82,7 +80,6 @@ function ArtistPage() {
       console.log(artistInfo);
       if (!artistInfo) return;
   
-      console.log(artistInfo.rows[0][0]);
       const headerDiv = 
           <h1>{artistInfo.rows[0][0]}</h1>
       setHeader(headerDiv);
