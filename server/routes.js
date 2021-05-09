@@ -166,9 +166,8 @@ const getIGotAFeeling = (req, res) => {
   FETCH NEXT 5 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
