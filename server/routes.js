@@ -57,6 +57,22 @@ const getArtist = (req, res) => {
   });
 };
 
+// get top songs by input artist
+const getTopSongsByArtist = (req, res) => {
+  const artistId = req.params.id;
+  const query = `
+  SELECT DISTINCT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
+  FROM Songs s
+  WHERE s.artist_id ='${artistId}'
+  ORDER BY s.popularity DESC
+  FETCH NEXT 10 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
 // search for songs by title
 const searchSongs = (req, res) => {
   const songName = req.params.name;
@@ -450,6 +466,7 @@ module.exports = {
   getExample: getExample,
   getSong: getSong,
 	getArtist: getArtist,
+  getTopSongsByArtist: getTopSongsByArtist,
 	getRecommendedArtists: getRecommendedArtists,
   searchSongs: searchSongs,
   searchArtists: searchArtists,

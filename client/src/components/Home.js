@@ -135,7 +135,7 @@ export default class Home extends React.Component {
     const contents = (
       <Card>
         <Card.Body>
-          <Card.Title>Best of hiphop by {artist} in 2018</Card.Title>
+          <Card.Title>Best of hiphop by {artist}, the biggest hiphop artist of 2018</Card.Title>
           <Card.Subtitle>swag</Card.Subtitle>
           {resultsDiv}
         </Card.Body>
@@ -354,11 +354,11 @@ export default class Home extends React.Component {
       <Container>
         <CardColumns>
           {this.state.iGotAFeeling}
+          {this.state.relevance}
           {this.state.activePopArtist}
           {this.state.saddest2020}
           {this.state.popular2020}
           {this.state.frequent2009}
-          {this.state.relevance}
           {this.state.hiphop2018}
           {this.state.metal2005}
         </CardColumns>
