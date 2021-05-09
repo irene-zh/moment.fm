@@ -38,9 +38,8 @@ const getSong = (req, res) => {
   WHERE s.track_id = '${songId}'
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -53,9 +52,8 @@ const getArtist = (req, res) => {
   WHERE a.artist_id ='${artistId}'
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -70,9 +68,8 @@ const searchSongs = (req, res) => {
   FETCH FIRST 20 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -87,9 +84,8 @@ const searchArtists = (req, res) => {
   FETCH FIRST 20 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -141,9 +137,8 @@ const getRecommendedArtists = (req, res) => {
   FETCH NEXT 5 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -166,9 +161,8 @@ const getIGotAFeeling = (req, res) => {
   FETCH NEXT 5 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -195,9 +189,8 @@ const getHipHop2018 = (req, res) => {
   FETCH FIRST 5 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -210,9 +203,8 @@ const getMetal2005 = (req, res) => {
   FETCH FIRST 5 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -238,9 +230,8 @@ const getSongsPopular2020 = (req, res) => {
   FETCH NEXT 5 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -257,9 +248,8 @@ const getArtistsFrequent2019 = (req, res) => {
   FETCH NEXT 5 ROWS ONLY
 `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -293,9 +283,8 @@ const getArtistsActivePop = (req, res) => {
   FETCH NEXT 5 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -346,9 +335,8 @@ const getArtistsRelevance = (req, res) => {
   FETCH NEXT 10 ROWS ONLY
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -363,9 +351,8 @@ const getPassword = (req, res) => {
   AND u.email = '${email}'
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -386,9 +373,8 @@ const getFriends = (req, res) => {
   AND u.username <> '${username}'
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -401,9 +387,8 @@ const getUser = (req, res) => {
   WHERE u.username = '${username}'
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -416,9 +401,8 @@ const getEmail = (req, res) => {
   WHERE u.email = '${email}'
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
@@ -434,8 +418,8 @@ const addUser = (req, res) => {
   ('${name}', '${username}', '${email}', '${password}')
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
