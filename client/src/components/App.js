@@ -129,6 +129,7 @@ function ArtistPage() {
         id={song[2]}
         name={song[0]}
         artist={song[1]}
+        artist_id={song[4]}
         year={song[3]}
         />
       );

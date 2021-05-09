@@ -9,7 +9,7 @@ export default class SongRow extends React.Component {
 			<Container>
         <Row>
           <Col><p><a href={"/song/" + this.props.id}>{this.props.name}</a></p></Col>
-          <Col><p>{this.props.artist}</p></Col>
+          <Col><p><a href={"/artist/" + this.props.artist_id}>{this.props.artist}</a></p></Col>
           <Col><p>{this.props.year}</p></Col>
         </Row>
       </Container>
