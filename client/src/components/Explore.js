@@ -49,11 +49,12 @@ export default class Explore extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      const resultsDiv = resList.map((resObj, i) =>
+      const resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          name={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          name={resObj[0]}
+          artist={resObj[1]}
+          id={resObj[2]}
+          year={resObj[3]}
         />
       );
 
@@ -84,9 +85,10 @@ export default class Explore extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      const resultsDiv = resList.map((resObj, i) =>
+      const resultsDiv = resList.rows.map((resObj, i) =>
         <ArtistRow
-          name={resObj.name}
+          name={resObj[0]}
+          id={resObj[1]}
         />
       );
 
