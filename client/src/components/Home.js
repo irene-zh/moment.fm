@@ -46,6 +46,7 @@ export default class Home extends React.Component {
           id={resObj[0]}
           name={resObj[1]}
           artist={resObj[2]}
+          artist_id={resObj[4]}
           year={resObj[3]}
         />
       );
@@ -83,6 +84,7 @@ export default class Home extends React.Component {
           id={resObj[0]}
           name={resObj[1]}
           artist={resObj[2]}
+          artist_id={resObj[3]}
           year={'2020'}
         />
       );
@@ -123,6 +125,7 @@ export default class Home extends React.Component {
           id={resObj[1]}
           name={resObj[0]}
           artist={resObj[2]}
+          artist_id={resObj[4]}
           year={resObj[3]}
         />
       );
@@ -163,6 +166,7 @@ export default class Home extends React.Component {
           id={resObj[1]}
           name={resObj[0]}
           artist={resObj[2]}
+          artist_id={resObj[4]}
           year={resObj[3]}
         />
       );
@@ -202,6 +206,7 @@ export default class Home extends React.Component {
           id={resObj[1]}
           name={resObj[0]}
           artist={resObj[2]}
+          artist_id={resObj[4]}
           year={resObj[3]}
         />
       );

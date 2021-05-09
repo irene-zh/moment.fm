@@ -53,6 +53,7 @@ export default class Explore extends React.Component {
         <SongRow
           name={resObj[0]}
           artist={resObj[1]}
+          artist_id={resObj[4]}
           id={resObj[2]}
           year={resObj[3]}
         />
