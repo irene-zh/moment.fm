@@ -344,16 +344,10 @@ export default class Home extends React.Component {
         <CardColumns>
           {this.state.iGotAFeeling}
           {this.state.activePopArtist}
-        </CardColumns>
-        <CardColumns>
           {this.state.saddest2020}
           {this.state.popular2020}
-        </CardColumns>
-        <CardColumns>
           {this.state.frequent2009}
           {this.state.relevance}
-        </CardColumns>
-        <CardColumns>
           {this.state.hiphop2018}
           {this.state.metal2005}
         </CardColumns>

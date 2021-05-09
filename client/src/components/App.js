@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	BrowserRouter as Router,
 	Route,
@@ -16,7 +16,7 @@ import {
 import Home from './Home';
 import Explore from './Explore';
 import PageNavbar from './PageNavbar';
-import RelatedArtists from './RelatedArtists';
+import ArtistRow from './ArtistRow';
 import NowPlaying from './NowPlaying';
 import SpotifySongRow from './SpotifySongRow';
 import SpotifyWebApi from 'spotify-web-api-js';
@@ -27,38 +27,36 @@ const spotifyApi = new SpotifyWebApi();
 /* functional component to render page for song */
 function SongPage() {
   let { id } = useParams();
-  var songDiv;
+  const [songInfo, setSongInfo] = useState([]);
 
-  // Send an HTTP request to the server.
-  fetch("http://localhost:8081/song/" + id,
-  {
-    method: 'GET' // The type of HTTP request.
-  }).then(res => {
-    // Convert the response data to a JSON.
-    return res.json();
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  }).then(songInfo => {
-    if (!songInfo) return;
+  useEffect(() => {
+    fetch("http://localhost:8081/song/" + id,
+    {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(songInfo => {
+      if (!songInfo) return;
 
-    songDiv = 
-      <Container>
-        <Row>
-          <h1>{songInfo.name}</h1>
-          <p>{songInfo.artist}</p>
-          <p>{songInfo.year}</p>
-        </Row>
-      </Container>;
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  });
+      // name, artist, year
+      const songDiv = 
+        <Container>
+          <h1>{songInfo.rows[0][0]}</h1>
+          <p>By <a href={"/artist/" + songInfo.rows[0][2]}>{songInfo.rows[0][1]}</a></p>
+          <p>Released in {songInfo.rows[0][4]}</p>
+        </Container>;
+      setSongInfo(songDiv);
+    }, err => {
+      console.log(err);
+    });
+  }, []);
 
   return (
   <>
   <PageNavbar />
-  {songDiv}
+  {songInfo}
   </>
   );
 }
@@ -66,40 +64,62 @@ function SongPage() {
 /* functional component to render page for artist */
 function ArtistPage() {
   let { id } = useParams();
-  var artistDiv;
+  const [header, setHeader] = useState([]);
+  const [related, setRelated] = useState([]);
 
-  fetch("http://localhost:8081/artist/" + id,
-  {
-    method: 'GET' // The type of HTTP request.
-  }).then(res => {
-    // Convert the response data to a JSON.
-    return res.json();
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  }).then(artistInfo => {
-    console.log(artistInfo);
-    if (!artistInfo) return;
-
-    console.log('boop');
-    artistDiv = 
-      <Container>
-        <Row>
-          <h1>{artistInfo.rows.name}</h1>
-        </Row>
-        <Row>
-          <RelatedArtists id={id} />
-        </Row>
-      </Container>;
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  });
+  useEffect(() => {
+    // get artist name
+    fetch("http://localhost:8081/artist/" + id,
+    {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(artistInfo => {
+      console.log(artistInfo);
+      if (!artistInfo) return;
+  
+      const headerDiv = 
+          <h1>{artistInfo.rows[0][0]}</h1>
+      setHeader(headerDiv);
+    }, err => {
+      console.log(err);
+    });
+  
+    // fetch related artists
+    fetch("http://localhost:8081/related/artists/" + id,
+    {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(artistsInfo => {
+      if (!artistsInfo) return;
+      console.log(artistsInfo);
+  
+      const relatedDiv = artistsInfo.rows.map((artist, i) =>
+        <ArtistRow
+          name={artist[0]}
+          id={artist[1]}
+          key={artist[1]}
+        />
+      );
+      setRelated(relatedDiv);
+    }, err => {
+      console.log(err);
+    });
+  }, []);
 
   return (
   <>
   <PageNavbar />
-  {artistDiv}
+  <Container>
+  {header}
+  <p>Artists you might like too:</p>
+  {related}
+  </Container>
   </>
   );
 }
@@ -307,11 +327,11 @@ export default class App extends React.Component {
       });
   }
 
-  submitLoginForm(event) {
-    console.log("submitting!");
+  async submitLoginForm(event) {
+    console.log("submitting!");      
+    event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
     }
 
@@ -328,7 +348,7 @@ export default class App extends React.Component {
     var userExists = false; 
     var emailExists = false;
     // check if user with this username exists
-    fetch("http://localhost:8081/login/user/" + username, {
+    await fetch("http://localhost:8081/login/user/" + username, {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -336,14 +356,13 @@ export default class App extends React.Component {
       console.log(err);
     }).then(res => {
       if (!res) return;
-      userExists = (res.rows.cnt > 0);
-      console.log(res.rows.cnt);
+      userExists = (res.rows[0] > 0);
       console.log(userExists);
     }, err => {
       console.log(err);
     });
     // check if user with this email exists
-    fetch("http://localhost:8081/login/email/" + email, {
+    await fetch("http://localhost:8081/login/email/" + email, {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -351,7 +370,7 @@ export default class App extends React.Component {
       console.log(err);
     }).then(res => {
       if (!res) return;
-      emailExists = (res.rows.cnt > 0);
+      emailExists = (res.rows[0] > 0);
       console.log(emailExists);
     }, err => {
       console.log(err);
@@ -361,7 +380,7 @@ export default class App extends React.Component {
 
     if (userExists || emailExists) {
       // successful login if passwords match for input username
-      fetch("http://localhost:8081/login/" + username + "/" + email + "/password", {
+      await fetch("http://localhost:8081/login/" + username + "/" + email + "/password", {
         method: 'GET'
       }).then(res => {
         return res.json();
@@ -369,7 +388,10 @@ export default class App extends React.Component {
         console.log(err);
       }).then(res => {
         if (!res) return;
-        if (res.password === password) {
+        console.log(res);
+        console.log(res.rows[0]);
+        if (res.rows[0][0] === password) {
+          console.log('logging in');
           this.setState({loggedIn: true, 
                          username: username,
                          email: email});
@@ -378,10 +400,8 @@ export default class App extends React.Component {
       }, err => {
         console.log(err);
       });
-    }
-
-    if (!userExists && !emailExists) {
-      fetch("http://localhost:8081/signup/" + name + "/" + username + "/" + email + "/" + password, {
+    } else {
+      await fetch("http://localhost:8081/signup/" + name + "/" + username + "/" + email + "/" + password, {
         method: 'GET'
       }, err => {
         console.log(err);
@@ -392,7 +412,6 @@ export default class App extends React.Component {
                      email: email});
       return;
     }
-
     return;
   }
 
@@ -452,7 +471,7 @@ export default class App extends React.Component {
               render={() => (
                 <>
                 <PageNavbar />
-                <Profile 
+                <Profile
                   loggedIn={this.state.loggedIn} 
                   username={this.state.username} 
                 />
