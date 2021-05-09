@@ -238,12 +238,12 @@ const getSongsPopular2020 = (req, res) => {
 // get the artists who released the most songs in 2019
 const getArtistsFrequent2019 = (req, res) => {
   const query = `
-  SELECT DISTINCT a.name AS name
+  SELECT DISTINCT a.name AS name, a.artist_id AS id
   FROM SONGS s
   JOIN ARTISTS a
-  ON s.artist = a.name
+  ON s.artist_id = a.artist_id
   WHERE EXTRACT(year FROM s.release_date) = 2019
-  GROUP BY a.name
+  GROUP BY a.artist_id, a.name
   ORDER BY COUNT(s.name) DESC
   FETCH NEXT 5 ROWS ONLY
 `;
@@ -257,28 +257,31 @@ const getArtistsFrequent2019 = (req, res) => {
 const getArtistsActivePop = (req, res) => {
   const query = `
   WITH years_active AS (
-    SELECT artist AS name, 
+    SELECT artist_id AS artist_id, 
           MAX(EXTRACT(year FROM s.release_date)) - MIN(EXTRACT(year FROM s.release_date)) 
           AS num_years
     FROM SONGS s
-    GROUP BY artist
+    GROUP BY s.artist_id
   ), num_songs AS (
-    SELECT a.name AS name, COUNT(s.name) AS num_songs
+    SELECT a.artist_id, COUNT(s.name) AS num_songs
     FROM ARTISTS a
     JOIN SONGS s
     ON a.name = s.artist
-  GROUP BY a.name 
-  ), artist_activity AS (
-  SELECT a.name AS name, n.num_songs / y.num_years AS activity
+    GROUP BY a.artist_id 
+  ), 
+  artist_activity AS (
+  SELECT a.artist_id AS artist_id, n.num_songs / y.num_years AS activity
   FROM ARTISTS a
   JOIN years_active y
-  ON a.name = y.name 
+  ON a.artist_id = y.artist_id
   JOIN num_songs n
-  ON a.name = n.name
+  ON a.artist_id = n.artist_id
   WHERE y.num_years > 0
   )
-  SELECT DISTINCT a.name
+  SELECT DISTINCT b.name, a.artist_id
   FROM artist_activity a
+  JOIN artists b
+  ON a.artist_id = b.artist_id
   ORDER BY a.activity DESC
   FETCH NEXT 5 ROWS ONLY
   `;
