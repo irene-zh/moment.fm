@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import {
   Container,
-  Row,
   Button,
   Form,
   Accordion,
@@ -157,55 +156,56 @@ function ArtistPage() {
 function UserPage() {
   let { username } = useParams();
   const userDiv = (
-    <Container>
-      <Row>
-      <h3>{username}</h3>
-      </Row>
-    </Container>
+    <h3>{username}</h3>
   );
-  var friendsDiv, friendsList;
+  const [numFriends, setNumFriends] = useState(0);
+  const [friends, setFriends] = useState([]);
 
-  fetch("http://localhost:8081/user/" + username + "/friends",
-  {
-    method: 'GET' // The type of HTTP request.
-  }).then(res => {
-    // Convert the response data to a JSON.
-    return res.json();
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  }).then(userInfo => {
-    if (!userInfo) return;
+  useEffect(() => {
+    fetch("http://localhost:8081/user/" + username + "/friends",
+    {
+      method: 'GET' // The type of HTTP request.
+    }).then(res => {
+      // Convert the response data to a JSON.
+      return res.json();
+    }, err => {
+      // Print the error if there is one.
+      console.log(err);
+    }).then(userInfo => {
+      if (!userInfo) return;
+      console.log(userInfo);
+      setNumFriends(userInfo.rows.length);
 
-    friendsList = userInfo.map((friend, i) =>
-      <Card.Body><a href={"/user/" + friend}>{friend}</a></Card.Body>
-    );
-
-    friendsDiv = 
-      <Container>
-        <Accordion defaultActiveKey="0">
-          <Card>
-            <Card.Header>
-              <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                {userInfo.friend.length} Friends
-              </Accordion.Toggle>
-            </Card.Header>
-            <Accordion.Collapse eventKey="0">
-              {friendsList}
-            </Accordion.Collapse>
-          </Card>
-        </Accordion>
-      </Container>;
-  }, err => {
-    // Print the error if there is one.
-    console.log(err);
-  });
+      const friends = userInfo.rows.map((friend, i) =>
+        <Card.Body><a href={"/user/" + friend}>{friend}</a></Card.Body>
+      );
+      setFriends(friends);
+    }, err => {
+      // Print the error if there is one.
+      console.log(err);
+    });
+  }, []);
 
   return (
   <>
   <PageNavbar />
-  {userDiv}
-  {friendsDiv}
+  <Container>
+    {userDiv}
+    <Accordion defaultActiveKey="1">
+      <Card>
+        <Card.Header>
+          <Accordion.Toggle as={Button} variant="link" eventKey="0">
+            {numFriends} Friends
+          </Accordion.Toggle>
+        </Card.Header>
+        <Accordion.Collapse eventKey="0">
+          <Container>
+          {friends}
+          </Container>
+        </Accordion.Collapse>
+      </Card>
+    </Accordion>
+  </Container>
   </>
   );
 }
