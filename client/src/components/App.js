@@ -471,7 +471,7 @@ export default class App extends React.Component {
               render={() => (
                 <>
                 <PageNavbar />
-                <Profile 
+                <Profile
                   loggedIn={this.state.loggedIn} 
                   username={this.state.username} 
                 />
