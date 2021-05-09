@@ -30,9 +30,9 @@ export default class Home extends React.Component {
 		this.getArtistsRelevance = this.getArtistsRelevance.bind(this);
 	};
 
-  getSongsIGotAFeeling() {
+  async getSongsIGotAFeeling() {
     var resultsDiv;
-		fetch("http://localhost:8081/iGotAFeeling", {
+		await fetch("http://localhost:8081/iGotAFeeling", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -41,12 +41,11 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          id = {resObj.id}
-          title={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          name={resObj[1]}
+          artist={resObj[2]}
+          year={resObj[3]}
         />
       );
     }, err => {
@@ -68,9 +67,9 @@ export default class Home extends React.Component {
     });
   }
 
-  getSongsSaddest2020() {
+  async getSongsSaddest2020() {
     var resultsDiv; 
-		fetch("http://localhost:8081/saddestOf2020", {
+		await fetch("http://localhost:8081/saddestOf2020", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -80,10 +79,9 @@ export default class Home extends React.Component {
       if (!resList) return;
       resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          id = {resObj.id}
-          title={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          name={resObj[1]}
+          artist={resObj[2]}
+          year={'2020'}
         />
       );
     }, err => {
@@ -105,10 +103,10 @@ export default class Home extends React.Component {
     });
   }
 
-  getSongsHipHop2018() {
+  async getSongsHipHop2018() {
     var resultsDiv;
     var artist = "";
-		fetch("http://localhost:8081/hiphop2018", {
+		await fetch("http://localhost:8081/hiphop2018", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -117,18 +115,19 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      artist = resList[0].artist_name;
-      resultsDiv = resList.map((resObj, i) =>
+      artist = resList.rows[0][2];
+      resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          id = {resObj.id}
-          title={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          name={resObj[0]}
+          artist={resObj[2]}
+          year={resObj[3]}
         />
       );
     }, err => {
       console.log(err);
     });
+
+    console.log(resultsDiv);
 
     const contents = (
       <Card>
@@ -145,9 +144,9 @@ export default class Home extends React.Component {
     });
   }
 
-  getSongsMetal2005() {
+  async getSongsMetal2005() {
     var resultsDiv;
-		fetch("http://localhost:8081/metal2005", {
+		await fetch("http://localhost:8081/metal2005", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -156,12 +155,11 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          id = {resObj.id}
-          title={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          name={resObj[0]}
+          artist={resObj[2]}
+          year={resObj[3]}
         />
       );
     }, err => {
@@ -184,9 +182,9 @@ export default class Home extends React.Component {
 
   }
 
-  getSongsPopular2020() {
+  async getSongsPopular2020() {
     var resultsDiv; 
-		fetch("http://localhost:8081/popular2020", {
+		await fetch("http://localhost:8081/popular2020", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -195,12 +193,11 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          id = {resObj.id}
-          title={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          name={resObj[0]}
+          artist={resObj[2]}
+          year={resObj[3]}
         />
       );
     }, err => {
@@ -222,9 +219,9 @@ export default class Home extends React.Component {
     });
   }
 
-  getArtistsFrequent2019() {
+  async getArtistsFrequent2019() {
     var resultsDiv; 
-		fetch("http://localhost:8081/saddestOf2020", {
+		await fetch("http://localhost:8081/frequency2019", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -235,7 +232,7 @@ export default class Home extends React.Component {
 
       resultsDiv = resList.rows.map((resObj, i) =>
         <ArtistRow
-          name = {resObj.name}
+          name = {resObj[0]}
         />
       );
     }, err => {
@@ -257,9 +254,9 @@ export default class Home extends React.Component {
     });
   }
 
-  getArtistsActivePop() {
+  async getArtistsActivePop() {
     var resultsDiv; 
-		fetch("http://localhost:8081/activePop", {
+		await fetch("http://localhost:8081/activePop", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -268,12 +265,9 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          id = {resObj.id}
-          title={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          name = {resObj[0]}
         />
       );
     }, err => {
@@ -296,9 +290,9 @@ export default class Home extends React.Component {
 
   }
 
-  getArtistsRelevance() {
+  async getArtistsRelevance() {
     var resultsDiv; 
-		fetch("http://localhost:8081/artistsRelevance", {
+		await fetch("http://localhost:8081/artistsRelevance", {
       method: 'GET'
     }).then(res => {
       return res.json();
@@ -307,12 +301,9 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.map((resObj, i) =>
+      resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
-          id = {resObj.id}
-          title={resObj.name}
-          artist={resObj.artist}
-          year={resObj.year}
+          artist={resObj[0]}
         />
       );
     }, err => {
@@ -353,10 +344,12 @@ export default class Home extends React.Component {
         <CardColumns>
           {this.state.iGotAFeeling}
           {this.state.activePopArtist}
-          {this.state.saddest2020}
         </CardColumns>
         <CardColumns>
+          {this.state.saddest2020}
           {this.state.popular2020}
+        </CardColumns>
+        <CardColumns>
           {this.state.frequent2009}
           {this.state.relevance}
         </CardColumns>
