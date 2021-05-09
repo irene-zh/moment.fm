@@ -8,7 +8,7 @@ export default class ArtistRow extends React.Component {
 		return (
 			<Container>
         <Row>
-          <Col><p>{this.props.name}</p></Col>
+          <Col><p><a href={"/artist/" + this.props.id}>{this.props.name}</a></p></Col>
         </Row>
       </Container>
 		);

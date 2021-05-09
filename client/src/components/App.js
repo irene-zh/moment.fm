@@ -27,7 +27,7 @@ const spotifyApi = new SpotifyWebApi();
 /* functional component to render page for song */
 function SongPage() {
   let { id } = useParams();
-  var songDiv;
+  const [songInfo, setSongInfo] = useState([]);
 
   // Send an HTTP request to the server.
   fetch("http://localhost:8081/song/" + id,
@@ -42,14 +42,14 @@ function SongPage() {
   }).then(songInfo => {
     if (!songInfo) return;
 
-    songDiv = 
+    // name, artist, year
+    const songDiv = 
       <Container>
-        <Row>
-          <h1>{songInfo.name}</h1>
-          <p>{songInfo.artist}</p>
-          <p>{songInfo.year}</p>
-        </Row>
+        <h1>{songInfo.rows[0][0]}</h1>
+        <p>By <a href={"/artist/" + songInfo.rows[0][2]}>{songInfo.rows[0][1]}</a></p>
+        <p>Released in {songInfo.rows[0][4]}</p>
       </Container>;
+    setSongInfo(songDiv);
   }, err => {
     // Print the error if there is one.
     console.log(err);
@@ -58,7 +58,7 @@ function SongPage() {
   return (
   <>
   <PageNavbar />
-  {songDiv}
+  {songInfo}
   </>
   );
 }
@@ -120,6 +120,7 @@ function ArtistPage() {
   <PageNavbar />
   <Container>
   {header}
+  <p>Artists you might like too:</p>
   {related}
   </Container>
   </>
