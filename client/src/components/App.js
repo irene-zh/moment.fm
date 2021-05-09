@@ -78,23 +78,17 @@ function ArtistPage() {
     // Print the error if there is one.
     console.log(err);
   }).then(artistInfo => {
+    console.log(artistInfo);
     if (!artistInfo) return;
 
-    // TODO: LINK FOR GENRES
-    const genresDiv = artistInfo.genres.map((genre, i) =>
-      <a href="#"><Button/>{genre}</a>
-    ); 
-
+    console.log('boop');
     artistDiv = 
       <Container>
         <Row>
-          <h1>{artistInfo.name}</h1>
+          <h1>{artistInfo.rows.name}</h1>
         </Row>
         <Row>
-          {genresDiv}
-        </Row>
-        <Row>
-          <RelatedArtists artistId={id} />
+          <RelatedArtists id={id} />
         </Row>
       </Container>;
   }, err => {

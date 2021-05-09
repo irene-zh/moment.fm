@@ -53,9 +53,8 @@ const getArtist = (req, res) => {
   WHERE a.artist_id ='${artistId}'
   `;
 
-  connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else res.json(rows);
+  connection.query(query, (rows) => {
+    res.json(rows);
   });
 };
 
