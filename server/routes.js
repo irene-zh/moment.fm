@@ -199,7 +199,11 @@ const getMetal2005 = (req, res) => {
   const query = `
   SELECT DISTINCT s.name as name, s.track_id AS id, s.artist as artist, EXTRACT(year FROM s.release_date) AS year
   FROM Songs s
-  ORDER BY s.liveness DESC
+  JOIN Artists a
+  ON s.artist_id = a.artist_id
+  WHERE EXTRACT(year FROM s.release_date) = 2005
+  AND a.genre LIKE '%metal'
+  ORDER BY s.liveness DESC, s.popularity DESC
   FETCH FIRST 5 ROWS ONLY
   `;
 
