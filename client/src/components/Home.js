@@ -42,7 +42,8 @@ export default class Home extends React.Component {
       if (!resList) return;
 
       resultsDiv = resList.rows.map((resObj, i) =>
-        <SongRow
+        <SongRow          
+          id={resObj[0]}
           name={resObj[1]}
           artist={resObj[2]}
           year={resObj[3]}
@@ -79,6 +80,7 @@ export default class Home extends React.Component {
       if (!resList) return;
       resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
+          id={resObj[0]}
           name={resObj[1]}
           artist={resObj[2]}
           year={'2020'}
@@ -118,6 +120,7 @@ export default class Home extends React.Component {
       artist = resList.rows[0][2];
       resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
+          id={resObj[1]}
           name={resObj[0]}
           artist={resObj[2]}
           year={resObj[3]}
@@ -157,6 +160,7 @@ export default class Home extends React.Component {
 
       resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
+          id={resObj[1]}
           name={resObj[0]}
           artist={resObj[2]}
           year={resObj[3]}
@@ -195,6 +199,7 @@ export default class Home extends React.Component {
 
       resultsDiv = resList.rows.map((resObj, i) =>
         <SongRow
+          id={resObj[1]}
           name={resObj[0]}
           artist={resObj[2]}
           year={resObj[3]}
@@ -230,9 +235,11 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.rows.map((resObj, i) =>
+      resultsDiv = resList.rows.map((artist, i) =>
         <ArtistRow
-          name = {resObj[0]}
+          name = {artist[0]}
+          id={artist[1]}
+          key={artist[1]}
         />
       );
     }, err => {
@@ -265,9 +272,11 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.rows.map((resObj, i) =>
-        <SongRow
-          name = {resObj[0]}
+      resultsDiv = resList.rows.map((artist, i) =>
+        <ArtistRow
+          name = {artist[0]}
+          id={artist[1]}
+          key={artist[1]}
         />
       );
     }, err => {
@@ -301,9 +310,11 @@ export default class Home extends React.Component {
     }).then(resList => {
       if (!resList) return;
 
-      resultsDiv = resList.rows.map((resObj, i) =>
-        <SongRow
-          artist={resObj[0]}
+      resultsDiv = resList.rows.map((artist, i) =>
+        <ArtistRow
+          name = {artist[0]}
+          id={artist[1]}
+          key={artist[1]}
         />
       );
     }, err => {
