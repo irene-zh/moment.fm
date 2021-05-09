@@ -299,47 +299,58 @@ const getArtistsActivePop = (req, res) => {
   });
 };
 
-/*
 // get most relevant artists
 const getArtistsRelevance = (req, res) => {
   const query = `
   WITH top_artists AS(
-    SELECT artist_name
-    FROM artists 
-    ORDER BY popularity
-    LIMIT 100
+    SELECT DISTINCT name
+    FROM ARTISTS 
+    ORDER BY popularity DESC
+    OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
   ),
   most_pop_1 AS(
-    SELECT artist, popularity
-    FROM songs s 
+    SELECT s.artist, s.artist_id, s.popularity
+    FROM SONGS s 
+    JOIN top_artists t 
+    ON t.name = s.artist
+    WHERE (EXTRACT(year FROM s.release_date)) > 2005 AND (EXTRACT(year FROM s.release_date)) < 2015
     ORDER BY s.popularity DESC
-    WHERE year > 1999 AND year < 2005 
+    FETCH NEXT 2000 ROWS ONLY
   ),
-  Num_hits_1 AS (
-    SELECT artist, COUNT(*) as num_hits
+  num_hits_1 AS (
+    SELECT artist_id, COUNT(*) as num_hits
     FROM most_pop_1
-    GROUP BY artist
+    GROUP BY artist_id
   ),
   most_pop_2 AS(
-  SELECT artist
-    FROM songs s
+    SELECT s.artist, s.artist_id, s.popularity
+    FROM SONGS s 
+    JOIN top_artists t 
+    ON t.name = s.artist
+    WHERE (EXTRACT(year FROM s.release_date)) > 2014 AND (EXTRACT(year FROM s.release_date)) < 2021 
     ORDER BY s.popularity DESC
-    WHERE year > 2004 AND year < 2005 
+    FETCH NEXT 2000 ROWS ONLY
   ),
-  Num_hits_2 AS (
-    SELECT artist, COUNT(*) as num_hits
+  num_hits_2 AS (
+    SELECT artist_id, COUNT(*) as num_hits
     FROM most_pop_2
-    GROUP BY artist
+    GROUP BY artist_id
   )
-  SELECT a.artist, (num_hits_1*num_hits_2)
-  FROM num_hits_1 a JOIN num_hits_2 b ON a.artist = b.artist; 
+  SELECT DISTINCT c.name, a.artist_id, (b.num_hits * a.num_hits) as relevance
+  FROM num_hits_1 a 
+  JOIN num_hits_2 b 
+  ON a.artist_id = b.artist_id
+  JOIN artists c
+  ON c.artist_id = a.artist_id
+  ORDER BY relevance DESC
+  FETCH NEXT 10 ROWS ONLY
   `;
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
     else res.json(rows);
   });
-};*/
+};
 
 // get password for input username and email
 const getPassword = (req, res) => {
@@ -442,7 +453,7 @@ module.exports = {
   getSongsPopular2020: getSongsPopular2020,
   getArtistsFrequent2019: getArtistsFrequent2019,
   getArtistsActivePop: getArtistsActivePop,
-  //getArtistsRelevance: getArtistsRelevance,
+  getArtistsRelevance: getArtistsRelevance,
   getPassword: getPassword,
   getFriends: getFriends, 
   getUser: getUser,

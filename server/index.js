@@ -39,7 +39,7 @@ app.get('/activePop', routes.getArtistsActivePop);
 
 app.get('/related/artists/:id', routes.getRecommendedArtists);
 
-// app.get('/artistRelevance', routes.getArtistsRelevance);
+app.get('/artistsRelevance', routes.getArtistsRelevance);
 
 app.get('/login/user/:username', routes.getUser);
 
