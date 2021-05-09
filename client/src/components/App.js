@@ -28,8 +28,10 @@ const spotifyApi = new SpotifyWebApi();
 function SongPage() {
   let { id } = useParams();
   const [songInfo, setSongInfo] = useState([]);
+  const [related, setRelated] = useState([]);
 
   useEffect(() => {
+    // get song info
     fetch("http://localhost:8081/song/" + id,
     {
       method: 'GET'
@@ -42,12 +44,39 @@ function SongPage() {
 
       // name, artist, year
       const songDiv = 
-        <Container>
+      <>
           <h1>{songInfo.rows[0][0]}</h1>
           <p>By <a href={"/artist/" + songInfo.rows[0][2]}>{songInfo.rows[0][1]}</a></p>
           <p>Released in {songInfo.rows[0][4]}</p>
-        </Container>;
+      </>
       setSongInfo(songDiv);
+    }, err => {
+      console.log(err);
+    });
+
+    // get recommended songs
+    fetch("http://localhost:8081/related/songs/" + id,
+    {
+      method: 'GET'
+    }).then(res => {
+      return res.json();
+    }, err => {
+      console.log(err);
+    }).then(songsInfo => {
+      if (!songsInfo) return;
+      console.log(songsInfo);
+  
+      const relatedDiv = songsInfo.rows.map((song, i) =>
+        <SongRow
+          name={song[0]}
+          id={song[1]}
+          key={song[1]}
+          artist={song[2]}
+          artist_id={song[3]}
+          year={song[4]}
+        />
+      );
+      setRelated(relatedDiv);
     }, err => {
       console.log(err);
     });
@@ -56,7 +85,11 @@ function SongPage() {
   return (
   <>
   <PageNavbar />
+  <Container>
   {songInfo}
+  <p>Some songs you might like:</p>
+  {related}
+  </Container>
   </>
   );
 }
