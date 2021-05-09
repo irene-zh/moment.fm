@@ -205,7 +205,7 @@ const getIGotAFeeling = (req, res) => {
     WHERE LOWER(s.name) = LOWER('I gotta Feeling') AND s.artist = 'Black Eyed Peas'
     FETCH NEXT 1 ROWS ONLY
   )
-  SELECT DISTINCT s.track_id AS id, s.name AS name, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year, s.track_id, s.popularity
+  SELECT DISTINCT s.track_id AS id, s.name AS name, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year, s.artist_id, s.popularity
   FROM songs s, got_a_feeling g
   WHERE 
     ABS(s.tempo - g.tempo) < 10 AND

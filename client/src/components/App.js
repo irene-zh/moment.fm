@@ -114,8 +114,7 @@ function ArtistPage() {
       console.log(artistInfo);
       if (!artistInfo) return;
   
-      const headerDiv = 
-          <h1>{artistInfo.rows[0][0]}</h1>
+      const headerDiv = <h1>{artistInfo.rows[0][0]}</h1>
       setHeader(headerDiv);
     }, err => {
       console.log(err);
