@@ -369,7 +369,7 @@ const getPassword = (req, res) => {
   });
 };
 
-// get friend's usernames: EDITED
+// get friend's usernames
 const getFriends = (req, res) => {
   const username = req.params.username;
   const query = `
@@ -377,13 +377,26 @@ const getFriends = (req, res) => {
     SELECT u.email
     FROM users u
     WHERE u.username = '${username}'
-  )
+  ), 
+  friend_1 AS (
   SELECT DISTINCT u.username AS friend
-  FROM friends f
+  FROM user_email e, friends f
   JOIN users u
   ON u.email = f.friend_email
-  WHERE f.user_email = user_email
+  WHERE f.user_email IN e.email
   AND u.username <> '${username}'
+  ),
+  friend_2 AS (
+  SELECT DISTINCT u.username AS friend
+  FROM user_email e, friends f
+  JOIN users u
+  ON u.email = f.user_email
+  WHERE f.friend_email IN e.email
+  AND u.username <> '${username}'
+  )
+  SELECT DISTINCT friend
+  FROM friend_1
+  UNION SELECT * FROM friend_2
   `;
 
   connection.query(query, (err, rows, fields) => {
@@ -435,6 +448,9 @@ const addUser = (req, res) => {
   `;
 
   connection.query(query, (err, rows, fields) => {
+    if (err) console.log(err);
+  });
+  connection.query('COMMIT', (rows) => {
     if (err) console.log(err);
   });
 };
