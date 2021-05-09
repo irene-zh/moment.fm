@@ -105,6 +105,44 @@ const searchArtists = (req, res) => {
   });
 };
 
+// get recommended songs for an input song
+const getRecommendedSongs = (req, res) => {
+  const songId = req.params.id;
+  const query = `
+  WITH this_decade AS (
+    SELECT EXTRACT(year FROM s.release_date) - MOD(EXTRACT(year FROM s.release_date), 10) AS decade, s.popularity, s.energy, s.danceability, s.artist_id
+    FROM songs s
+    WHERE s.track_id = '${songId}'
+  ), this_genre AS (
+      SELECT a.genre
+      FROM songs s
+      JOIN artists a
+      ON s.artist_id = a.artist_id
+      WHERE s.track_id = '${songId}'
+  ), 
+  same_decade_genre AS (
+      SELECT s.track_id
+      FROM this_decade d, this_genre g, songs s
+      JOIN artists a
+      ON s.artist_id = a.artist_id
+      WHERE EXTRACT(year FROM s.release_date) >= d.decade
+      AND EXTRACT(year FROM s.release_date) <= d.decade + 9
+      AND a.genre IN g.genre
+  )
+  SELECT DISTINCT s.name, s.track_id, s.artist, s.artist_id, EXTRACT(year FROM s.release_date) AS year
+  FROM this_decade d, songs s
+  INNER JOIN same_decade_genre g
+  ON g.track_id = s.track_id
+  WHERE s.artist_id <> d.artist_id
+  ORDER BY ABS(s.energy - d.energy) ASC, ABS(s.danceability - d.danceability) ASC, ABS(s.popularity - d.popularity) ASC
+  FETCH NEXT 10 ROWS ONLY
+  `;
+
+  connection.query(query, (rows) => {
+    res.json(rows);
+  });
+};
+
 // get recommended artists for an input artist
 const getRecommendedArtists = (req, res) => {
   const artistId = req.params.id;
@@ -467,6 +505,7 @@ module.exports = {
   getSong: getSong,
 	getArtist: getArtist,
   getTopSongsByArtist: getTopSongsByArtist,
+  getRecommendedSongs: getRecommendedSongs,
 	getRecommendedArtists: getRecommendedArtists,
   searchSongs: searchSongs,
   searchArtists: searchArtists,

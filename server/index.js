@@ -41,6 +41,8 @@ app.get('/activePop', routes.getArtistsActivePop);
 
 app.get('/related/artists/:id', routes.getRecommendedArtists);
 
+app.get('/related/songs/:id', routes.getRecommendedSongs);
+
 app.get('/artistsRelevance', routes.getArtistsRelevance);
 
 app.get('/login/user/:username', routes.getUser);
