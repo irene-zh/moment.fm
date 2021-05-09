@@ -37,6 +37,7 @@ const getSong = (req, res) => {
   FROM songs s
   WHERE s.track_id = '${songId}'
   `;
+  console.log(songId);
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -47,6 +48,7 @@ const getSong = (req, res) => {
 // get arist info by id
 const getArtist = (req, res) => {
   const artistId = req.params.id;
+  console.log(artistId);
   const query = `
   SELECT DISTINCT a.name AS name, a.artist_id AS id
   FROM Artists a

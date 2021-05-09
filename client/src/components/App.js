@@ -26,11 +26,11 @@ const spotifyApi = new SpotifyWebApi();
 
 /* functional component to render page for song */
 function SongPage() {
-  let { songId } = useParams();
+  let { id } = useParams();
   var songDiv;
 
   // Send an HTTP request to the server.
-  fetch("http://localhost:8081/song/" + songId,
+  fetch("http://localhost:8081/song/" + id,
   {
     method: 'GET' // The type of HTTP request.
   }).then(res => {
@@ -65,10 +65,10 @@ function SongPage() {
 
 /* functional component to render page for artist */
 function ArtistPage() {
-  let { artistId } = useParams();
+  let { id } = useParams();
   var artistDiv;
 
-  fetch("http://localhost:8081/artist/" + artistId,
+  fetch("http://localhost:8081/artist/" + id,
   {
     method: 'GET' // The type of HTTP request.
   }).then(res => {
@@ -94,7 +94,7 @@ function ArtistPage() {
           {genresDiv}
         </Row>
         <Row>
-          <RelatedArtists artistId={artistId} />
+          <RelatedArtists artistId={id} />
         </Row>
       </Container>;
   }, err => {
