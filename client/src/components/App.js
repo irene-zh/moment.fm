@@ -26,11 +26,11 @@ const spotifyApi = new SpotifyWebApi();
 
 /* functional component to render page for song */
 function SongPage() {
-  let { songId } = useParams();
+  let { id } = useParams();
   var songDiv;
 
   // Send an HTTP request to the server.
-  fetch("http://localhost:8081/song/" + songId,
+  fetch("http://localhost:8081/song/" + id,
   {
     method: 'GET' // The type of HTTP request.
   }).then(res => {
@@ -65,10 +65,10 @@ function SongPage() {
 
 /* functional component to render page for artist */
 function ArtistPage() {
-  let { artistId } = useParams();
+  let { id } = useParams();
   var artistDiv;
 
-  fetch("http://localhost:8081/artist/" + artistId,
+  fetch("http://localhost:8081/artist/" + id,
   {
     method: 'GET' // The type of HTTP request.
   }).then(res => {
@@ -78,23 +78,17 @@ function ArtistPage() {
     // Print the error if there is one.
     console.log(err);
   }).then(artistInfo => {
+    console.log(artistInfo);
     if (!artistInfo) return;
 
-    // TODO: LINK FOR GENRES
-    const genresDiv = artistInfo.genres.map((genre, i) =>
-      <a href="#"><Button/>{genre}</a>
-    ); 
-
+    console.log('boop');
     artistDiv = 
       <Container>
         <Row>
-          <h1>{artistInfo.name}</h1>
+          <h1>{artistInfo.rows.name}</h1>
         </Row>
         <Row>
-          {genresDiv}
-        </Row>
-        <Row>
-          <RelatedArtists artistId={artistId} />
+          <RelatedArtists id={id} />
         </Row>
       </Container>;
   }, err => {

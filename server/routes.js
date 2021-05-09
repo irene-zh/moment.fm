@@ -33,7 +33,7 @@ const getSaddest2020 = (req, res) => {
 const getSong = (req, res) => {
   const songId = req.params.id;
   const query = `
-  SELECT DISTINCT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
+  SELECT DISTINCT s.name, s.artist, s.artist_id, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
   WHERE s.track_id = '${songId}'
   `;
@@ -149,7 +149,7 @@ const getIGotAFeeling = (req, res) => {
     SELECT s.energy, s.danceability, s.tempo, s.loudness
     FROM songs s
     WHERE LOWER(s.name) = LOWER('I gotta Feeling') AND s.artist = 'Black Eyed Peas'
-      FETCH NEXT 1 ROWS ONLY
+    FETCH NEXT 1 ROWS ONLY
   )
   SELECT DISTINCT s.track_id AS id, s.name AS name, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year, s.popularity
   FROM songs s, got_a_feeling g
@@ -356,7 +356,7 @@ const getPassword = (req, res) => {
   });
 };
 
-// get friend's usernames: EDITED
+// get friend's usernames
 const getFriends = (req, res) => {
   const username = req.params.username;
   const query = `
@@ -364,13 +364,26 @@ const getFriends = (req, res) => {
     SELECT u.email
     FROM users u
     WHERE u.username = '${username}'
-  )
+  ), 
+  friend_1 AS (
   SELECT DISTINCT u.username AS friend
-  FROM friends f
+  FROM user_email e, friends f
   JOIN users u
   ON u.email = f.friend_email
-  WHERE f.user_email = user_email
+  WHERE f.user_email IN e.email
   AND u.username <> '${username}'
+  ),
+  friend_2 AS (
+  SELECT DISTINCT u.username AS friend
+  FROM user_email e, friends f
+  JOIN users u
+  ON u.email = f.user_email
+  WHERE f.friend_email IN e.email
+  AND u.username <> '${username}'
+  )
+  SELECT DISTINCT friend
+  FROM friend_1
+  UNION SELECT * FROM friend_2
   `;
 
   connection.query(query, (rows) => {
@@ -420,6 +433,9 @@ const addUser = (req, res) => {
 
   connection.query(query, (rows) => {
     res.json(rows);
+  });
+  connection.query('COMMIT', (rows) => {
+    if (err) console.log(err);
   });
 };
 

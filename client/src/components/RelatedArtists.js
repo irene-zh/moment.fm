@@ -5,20 +5,14 @@ import ArtistRow from './ArtistRow';
 export default class RelatedArtists extends React.Component {
 	/* props looks like:
 		{
-			id
-      name
+			artistId
 		}
 	*/
   constructor(props) {
 		super(props);
 
-		this.state = {
-			info: {}
-		};
-	};
-
-  componentDidMount() {
-    const artistId = this.props.artistId;
+    const artistId = this.props.id;
+    var artistsDiv;
 
     // Send an HTTP request to the server.
     fetch("http://localhost:8081/related/artists/" + artistId,
@@ -33,22 +27,21 @@ export default class RelatedArtists extends React.Component {
     }).then(artistsInfo => {
       if (!artistsInfo) return;
 
-      const artistsDiv = artistsInfo.map((artist, i) =>
+      artistsDiv = artistsInfo.map((artist, i) =>
         <ArtistRow
           name={artist.name}
-          id={artist.id}
+          id={artist.artist_id}
         />
       );
-
-      // Set the state of the keywords list to the value returned by the HTTP response from the server.
-      this.setState({
-        info: artistsDiv
-      });
     }, err => {
       // Print the error if there is one.
       console.log(err);
     });
-  }
+
+		this.state = {
+			info: artistsDiv
+		};
+	};
 	
 	render() {
 		return (
