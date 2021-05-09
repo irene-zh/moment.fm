@@ -33,11 +33,10 @@ const getSaddest2020 = (req, res) => {
 const getSong = (req, res) => {
   const songId = req.params.id;
   const query = `
-  SELECT DISTINCT s.name, s.artist, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
+  SELECT DISTINCT s.name, s.artist, s.artist_id, s.track_id AS id, EXTRACT(YEAR FROM s.release_date) AS year
   FROM songs s
   WHERE s.track_id = '${songId}'
   `;
-  console.log(songId);
 
   connection.query(query, (err, rows, fields) => {
     if (err) console.log(err);
@@ -48,7 +47,6 @@ const getSong = (req, res) => {
 // get arist info by id
 const getArtist = (req, res) => {
   const artistId = req.params.id;
-  console.log(artistId);
   const query = `
   SELECT DISTINCT a.name AS name, a.artist_id AS id
   FROM Artists a
@@ -156,7 +154,7 @@ const getIGotAFeeling = (req, res) => {
     SELECT s.energy, s.danceability, s.tempo, s.loudness
     FROM songs s
     WHERE LOWER(s.name) = LOWER('I gotta Feeling') AND s.artist = 'Black Eyed Peas'
-      FETCH NEXT 1 ROWS ONLY
+    FETCH NEXT 1 ROWS ONLY
   )
   SELECT DISTINCT s.track_id AS id, s.name AS name, s.artist AS artist, EXTRACT(year FROM s.release_date) AS year, s.popularity
   FROM songs s, got_a_feeling g
